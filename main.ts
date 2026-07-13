@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { addBorderMask } from "./border";
 import { addUserLocation } from "./location";
 import { addSubwayLayers } from "./subway";
+import { addTrainLayers } from "./train";
 
 const map = L.map("map", { editable: true } as L.MapOptions).setView(
   [43.6532, -79.3832],
@@ -19,6 +20,7 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
 addBorderMask(map);
 addUserLocation(map);
 addSubwayLayers(map);
+addTrainLayers(map);
 
 // ── Export Polygons ─────────────────────────────────────────────
 document.getElementById("exportBtn")!.addEventListener("click", () => {

@@ -5,9 +5,26 @@ from collections import defaultdict
 from pathlib import Path
 
 
-def load_trip_names(trips_path: Path) -> dict[str, str]:
+def load_train_route_ids(routes_path: Path) -> set[str]:
+    """Read routes.txt and return the set of route_ids where route_type == 2 (train)."""
+    train_routes: set[str] = set()
+    try:
+        with routes_path.open("r", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row.get("route_type", "").strip() == "2":
+                    rid = row.get("route_id", "").strip()
+                    if rid:
+                        train_routes.add(rid)
+    except FileNotFoundError:
+        print(f"  (no routes.txt found at {routes_path}, skipping train filter)")
+    return train_routes
+
+
+def load_trip_names(trips_path: Path, train_routes: set[str]) -> dict[str, str]:
     """
     Read trips.txt and return a mapping of shape_id -> friendly route name.
+    Only includes trips belonging to train routes (route_type == 2).
     Prioritises trip_headsign, then trip_short_name, then route_id.
     """
     shape_names: dict[str, str] = {}
@@ -16,12 +33,16 @@ def load_trip_names(trips_path: Path) -> dict[str, str]:
             reader = csv.DictReader(f)
             for row in reader:
                 sid = row.get("shape_id", "").strip()
-                if not sid:
+                route_id = row.get("route_id", "").strip()
+                if not sid or not route_id:
+                    continue
+                # Skip trips that aren't on train routes
+                if route_id not in train_routes:
                     continue
                 name = (
                     row.get("trip_headsign", "")
                     or row.get("trip_short_name", "")
-                    or row.get("route_id", "")
+                    or route_id
                 ).strip()
                 # Prefer the first (earliest) non-empty name we see
                 if sid not in shape_names and name:
@@ -31,7 +52,9 @@ def load_trip_names(trips_path: Path) -> dict[str, str]:
     return shape_names
 
 
-def convert_shapes_to_geojson(input_csv: Path, output_dir="geojson_output"):
+def convert_shapes_to_geojson(
+    input_csv: Path, output_dir: Path = Path("geojson_output")
+):
     # Create the output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -72,9 +95,20 @@ def convert_shapes_to_geojson(input_csv: Path, output_dir="geojson_output"):
 
     print(f"Found {len(shapes_data)} unique shapes. Generating GeoJSON files...")
 
-    # Load friendly route names from the sibling trips.txt
+    # Load train route IDs from the sibling routes.txt
+    routes_path = input_csv.parent / "routes.txt"
+    train_routes = load_train_route_ids(routes_path)
+
+    # Load friendly route names from the sibling trips.txt (train trips only)
     trips_path = input_csv.parent / "trips.txt"
-    shape_names = load_trip_names(trips_path)
+    shape_names = load_trip_names(trips_path, train_routes)
+
+    # Filter shapes to only those referenced by train trips
+    if train_routes:
+        shapes_data = {
+            sid: pts for sid, pts in shapes_data.items() if sid in shape_names
+        }
+        print(f"Filtered to {len(shapes_data)} train-only shapes.")
 
     # Write each shape to an individual GeoJSON file
     for shape_id, points in shapes_data.items():
@@ -118,4 +152,6 @@ def convert_shapes_to_geojson(input_csv: Path, output_dir="geojson_output"):
 
 if __name__ == "__main__":
     for entry in Path(__file__).parent.rglob("**/shapes.txt"):
-        convert_shapes_to_geojson(entry)
+        convert_shapes_to_geojson(
+            entry, Path(__file__).parent.parent / "shapes" / "metrolinx"
+        )
