@@ -1,4 +1,12 @@
+import * as turf from "@turf/turf";
 import L from "leaflet";
+import { borderGeoJSON } from "./border";
+import { QUARTER_MILE } from "./constants";
+
+const borderFeature = borderGeoJSON.features[0] as GeoJSON.Feature<
+  GeoJSON.Polygon,
+  Record<string, unknown>
+>;
 
 // Vite glob‑import all Metrolinx GO / UP Express train GeoJSON files
 const geojsonModules: Record<string, string> = import.meta.glob("./shapes/metrolinx/*.geojson", {
@@ -7,55 +15,100 @@ const geojsonModules: Record<string, string> = import.meta.glob("./shapes/metrol
   eager: true,
 });
 
-export function addTrainLayers(map: L.Map): void {
+// GO Train corridor colour map
+const colourMap: Record<string, string> = {
+  BR: "#003767", // Barrie
+  GT: "#00853e", // Kitchener
+  KI: "#00853e",
+  LE: "#ff0d00", // Lakeshore East
+  LW: "#98002e", // Lakeshore West
+  MI: "#f57f25", // Milton
+  RH: "#0099c7", // Richmond Hill
+  ST: "#794500", // Stouffville
+};
+
+const parseColour = (name?: string) => {
+  // Try to match a colour from the route prefix (e.g. "BR - ...")
+  let colour = "#666";
+  if (name) {
+    if (name.startsWith("UP Express")) {
+      return "#0075D2";
+    }
+
+    for (const [prefix, c] of Object.entries(colourMap)) {
+      if (name.startsWith(prefix)) {
+        colour = c;
+        break;
+      }
+    }
+  }
+
+  return colour;
+};
+
+export function addTrainLayers(map: L.Map): L.LayerGroup {
+  const group = L.layerGroup();
+
+  // Dedicated pane for station radius circles so they don't stack opacity
+  map.createPane("trainRadius");
+  const radiusPane = map.getPane("trainRadius")!;
+  radiusPane.style.zIndex = "405";
+
   for (const data of Object.values(geojsonModules)) {
     const collection: GeoJSON.FeatureCollection = JSON.parse(data);
 
     const geojsonLayer = L.geoJSON(collection, {
       coordsToLatLng: (coords: [number, number]) => L.latLng(coords[1], coords[0]),
-      style: (feature) => {
-        const name: string | undefined = feature?.properties?.name;
-
-        // UP Express — distinct light‑blue styling
-        if (name?.startsWith("UP Express")) {
-          return {
-            color: "#0075D2",
-            weight: 5,
-            opacity: 0.8,
-          };
+      filter: (feature) => {
+        if (feature.geometry.type === "Point") {
+          return turf.booleanPointInPolygon(feature.geometry, borderFeature);
         }
 
-        // GO Train corridor colour map
-        const colourMap: Record<string, string> = {
-          BR: "#003767", // Barrie
-          GT: "#00853e", // Kitchener
-          KI: "#00853e",
-          LE: "#ff0d00", // Lakeshore East
-          LW: "#98002e", // Lakeshore West
-          MI: "#f57f25", // Milton
-          RH: "#0099c7", // Richmond Hill
-          ST: "#794500", // Stouffville
-        };
+        return true;
+      },
+      pointToLayer: (feature, latlng) => {
+        const isStation = feature?.properties?.marker_symbol === "station";
 
-        // Try to match a colour from the route prefix (e.g. "BR - ...")
-        let colour = "#666";
-        if (name) {
-          for (const [prefix, c] of Object.entries(colourMap)) {
-            if (name.startsWith(prefix)) {
-              colour = c;
-              break;
-            }
-          }
+        if (isStation) {
+          return new L.FeatureGroup([
+            L.circleMarker(latlng, {
+              radius: 5,
+              fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
+              weight: 0,
+              fillOpacity: 1,
+            }),
+            L.circle(latlng, {
+              radius: QUARTER_MILE,
+              fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
+              fillOpacity: 0.25,
+              weight: 0,
+            }),
+          ]);
+        }
+
+        return L.circleMarker(latlng, {
+          radius: 5,
+          fillColor: "#fff",
+          weight: 0,
+          fillOpacity: 0,
+        });
+      },
+      style: (feature) => {
+        if (feature?.geometry.type === "Point") {
+          return {};
         }
 
         return {
-          color: colour,
+          color: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
           weight: 3,
           opacity: 0.7,
         };
       },
     });
 
-    geojsonLayer.addTo(map);
+    group.addLayer(geojsonLayer);
   }
+
+  group.addTo(map);
+  return group;
 }

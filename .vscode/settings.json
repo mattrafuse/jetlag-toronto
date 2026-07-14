@@ -1,3 +1,8 @@
 {
-    "[typescript]": {"editor.defaultFormatter": "oxc.oxc-vscode"}
+    "[typescript]": {"editor.defaultFormatter": "oxc.oxc-vscode"},
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always",
+        "source.format.oxc": "always"
+    }
 }

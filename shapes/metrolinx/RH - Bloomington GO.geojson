@@ -2177,6 +2177,118 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "RI",
+        "route_name": "RH - Bloomington GO",
+        "name": "Richmond Hill GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.426167,
+          43.874307
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "GO",
+        "route_name": "RH - Bloomington GO",
+        "name": "Gormley GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.399033,
+          43.941617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "LA",
+        "route_name": "RH - Bloomington GO",
+        "name": "Langstaff GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.423139,
+          43.838546
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "RH - Bloomington GO",
+        "name": "Union Station GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3806,
+          43.645195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "OL",
+        "route_name": "RH - Bloomington GO",
+        "name": "Old Cummer GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.371403,
+          43.793703
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "OR",
+        "route_name": "RH - Bloomington GO",
+        "name": "Oriole GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.364275,
+          43.765518
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BM",
+        "route_name": "RH - Bloomington GO",
+        "name": "Bloomington GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.397258,
+          43.975949
+        ]
+      }
     }
   ]
 }

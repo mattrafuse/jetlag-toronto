@@ -489,6 +489,86 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "PA",
+        "route_name": "UP Express Pearson Airport",
+        "name": "UP Express Pearson Airport",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.612968,
+          43.682683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MD",
+        "route_name": "UP Express Pearson Airport",
+        "name": "Mount Dennis GO/UP",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.48703,
+          43.68749
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "WE",
+        "route_name": "UP Express Pearson Airport",
+        "name": "Weston GO/UP",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.51368,
+          43.70029
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "UP Express Pearson Airport",
+        "name": "UP Express Union Station",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.383555,
+          43.644238
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BL",
+        "route_name": "UP Express Pearson Airport",
+        "name": "Bloor GO/UP",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.450192,
+          43.656928
+        ]
+      }
     }
   ]
 }

@@ -1325,6 +1325,214 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "CF",
+        "route_name": "LW - Confederation GO",
+        "name": "Confederation GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.760331,
+          43.241874
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "OA",
+        "route_name": "LW - Confederation GO",
+        "name": "Oakville GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.682242,
+          43.455594
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "WR",
+        "route_name": "LW - Confederation GO",
+        "name": "West Harbour GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.866222,
+          43.266775
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MI",
+        "route_name": "LW - Confederation GO",
+        "name": "Mimico GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.497762,
+          43.616411
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "CL",
+        "route_name": "LW - Confederation GO",
+        "name": "Clarkson GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.633206,
+          43.513127
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "AP",
+        "route_name": "LW - Confederation GO",
+        "name": "Appleby GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.760991,
+          43.379429
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BO",
+        "route_name": "LW - Confederation GO",
+        "name": "Bronte GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.722294,
+          43.416774
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "LW - Confederation GO",
+        "name": "Union Station GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3806,
+          43.645195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "LO",
+        "route_name": "LW - Confederation GO",
+        "name": "Long Branch GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.546149,
+          43.591317
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BU",
+        "route_name": "LW - Confederation GO",
+        "name": "Burlington GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.809141,
+          43.341265
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "AL",
+        "route_name": "LW - Confederation GO",
+        "name": "Aldershot GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.855659,
+          43.313385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "EX",
+        "route_name": "LW - Confederation GO",
+        "name": "Exhibition GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.418927,
+          43.635549
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "PO",
+        "route_name": "LW - Confederation GO",
+        "name": "Port Credit GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.586881,
+          43.555999
+        ]
+      }
     }
   ]
 }

@@ -1461,6 +1461,166 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MK",
+        "route_name": "ST - Old Elm GO",
+        "name": "Milliken GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.301785,
+          43.823227
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "LI",
+        "route_name": "ST - Old Elm GO",
+        "name": "Old Elm GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.237098,
+          43.990395
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MJ",
+        "route_name": "ST - Old Elm GO",
+        "name": "Mount Joy GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.26313,
+          43.900521
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "AG",
+        "route_name": "ST - Old Elm GO",
+        "name": "Agincourt GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.284385,
+          43.78611
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MR",
+        "route_name": "ST - Old Elm GO",
+        "name": "Markham GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.262469,
+          43.882691
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "ST",
+        "route_name": "ST - Old Elm GO",
+        "name": "Stouffville GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.249989,
+          43.970924
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "ST - Old Elm GO",
+        "name": "Union Station GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3806,
+          43.645195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UI",
+        "route_name": "ST - Old Elm GO",
+        "name": "Unionville GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.314332,
+          43.851689
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "CE",
+        "route_name": "ST - Old Elm GO",
+        "name": "Centennial GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.289211,
+          43.873601
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "KE",
+        "route_name": "ST - Old Elm GO",
+        "name": "Kennedy GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.262706,
+          43.733045
+        ]
+      }
     }
   ]
 }

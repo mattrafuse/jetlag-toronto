@@ -17,15 +17,17 @@ const outerBounds: [number, number][] = [
   [-90, -180],
 ];
 
-export function addBorderMask(map: L.Map): L.Polygon {
+export function addBorderMask(map: L.Map): L.LayerGroup {
+  const group = L.layerGroup();
   const mask = L.polygon([outerBounds, borderCoords], {
     color: "#ff4444",
     weight: 2,
     fillColor: "#ff4444",
     fillOpacity: 0.15,
   });
-  mask.addTo(map);
-  return mask;
+  group.addLayer(mask);
+  group.addTo(map);
+  return group;
 }
 
 export { borderCoords, borderGeoJSON };

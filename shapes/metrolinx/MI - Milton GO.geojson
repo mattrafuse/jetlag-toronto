@@ -825,6 +825,150 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "ME",
+        "route_name": "MI - Milton GO",
+        "name": "Meadowvale GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.754328,
+          43.597566
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "ER",
+        "route_name": "MI - Milton GO",
+        "name": "Erindale GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.668506,
+          43.567235
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "KP",
+        "route_name": "MI - Milton GO",
+        "name": "Kipling GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.536287,
+          43.636955
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "SR",
+        "route_name": "MI - Milton GO",
+        "name": "Streetsville GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.70882,
+          43.575584
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "CO",
+        "route_name": "MI - Milton GO",
+        "name": "Cooksville GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.623695,
+          43.582973
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "MI - Milton GO",
+        "name": "Union Station GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3806,
+          43.645195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "ML",
+        "route_name": "MI - Milton GO",
+        "name": "Milton GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.867172,
+          43.52364
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "LS",
+        "route_name": "MI - Milton GO",
+        "name": "Lisgar GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.788539,
+          43.590791
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "DI",
+        "route_name": "MI - Milton GO",
+        "name": "Dixie GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.577762,
+          43.608022
+        ]
+      }
     }
   ]
 }

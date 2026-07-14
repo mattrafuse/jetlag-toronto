@@ -2877,6 +2877,182 @@
           ]
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "EA",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "East Gwillimbury GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.455776,
+          44.077996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "KC",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "King City GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.526886,
+          43.920037
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "RU",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Rutherford GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.498819,
+          43.838487
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "MP",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Maple GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.506984,
+          43.859481
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "AD",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Allandale Waterfront GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.687858,
+          44.374139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "AU",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Aurora GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.459725,
+          44.000758
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "NE",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Newmarket GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.459289,
+          44.060426
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "UN",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Union Station GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.3806,
+          43.645195
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BA",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Barrie South GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.627441,
+          44.35112
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "DW",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Downsview Park GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.47835,
+          43.7536333
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stop_id": "BD",
+        "route_name": "BR - Allandale Waterfront GO",
+        "name": "Bradford GO",
+        "marker_symbol": "station"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.555394,
+          44.116513
+        ]
+      }
     }
   ]
 }
