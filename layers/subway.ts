@@ -3,6 +3,7 @@ import { featureLayer } from "esri-leaflet";
 import { Feature, LineString } from "geojson";
 import L from "leaflet";
 import { QUARTER_MILE } from "../constants";
+import { stationRegistry } from "../questions/station-registry";
 import { borderGeoJSON } from "./border";
 
 const borderFeature = borderGeoJSON.features[0] as GeoJSON.Feature<
@@ -51,22 +52,30 @@ export function addSubwayLayers(map: L.Map): L.LayerGroup {
       where: "(ARRIVAL_TIMES LIKE '%Line 5%') AND (STOP_NAME NOT LIKE '%Westbound%')",
       isModern: true,
       pointToLayer: (_feature, latlng) => {
-        return new L.FeatureGroup([
-          L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#FF8000",
-            fillOpacity: 1,
-            weight: 0,
-            pane: "subwayStations",
-          }),
-          L.circle(latlng, {
-            radius: QUARTER_MILE,
-            fillColor: "#FF8000",
-            fillOpacity: 0.25,
-            weight: 0,
-            pane: "subwayRadius",
-          }),
-        ]);
+        const ll = latlng as L.LatLng;
+        const marker = L.circleMarker(ll, {
+          radius: 5,
+          fillColor: "#FF8000",
+          fillOpacity: 1,
+          weight: 0,
+          pane: "subwayStations",
+        });
+        const circle = L.circle(ll, {
+          radius: QUARTER_MILE,
+          fillColor: "#FF8000",
+          fillOpacity: 0.25,
+          weight: 0,
+          pane: "subwayRadius",
+        });
+        const fg = new L.FeatureGroup([marker, circle]);
+        stationRegistry.register(
+          `subway-line5-${_feature.properties?.OBJECTID ?? _feature.id}`,
+          ll,
+          circle,
+          marker,
+          fg,
+        );
+        return fg;
       },
     }),
   );
@@ -96,7 +105,8 @@ export function addSubwayLayers(map: L.Map): L.LayerGroup {
           });
         }
 
-        const marker = L.circleMarker(latlng, {
+        const ll = latlng as L.LatLng;
+        const marker = L.circleMarker(ll, {
           radius: 5,
           fillColor: `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`,
           weight: 0,
@@ -104,7 +114,7 @@ export function addSubwayLayers(map: L.Map): L.LayerGroup {
           pane: "subwayStations",
         });
 
-        const radius = L.circle(latlng, {
+        const radius = L.circle(ll, {
           radius: QUARTER_MILE,
           fillColor: `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`,
           weight: 0,
@@ -112,7 +122,15 @@ export function addSubwayLayers(map: L.Map): L.LayerGroup {
           pane: "subwayRadius",
         });
 
-        return new L.FeatureGroup([marker, radius]);
+        const fg = new L.FeatureGroup([marker, radius]);
+        stationRegistry.register(
+          `subway-${feature.properties?.STOP_ID ?? feature.id}`,
+          ll,
+          radius,
+          marker,
+          fg,
+        );
+        return fg;
       },
     }),
   );

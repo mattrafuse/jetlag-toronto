@@ -1,6 +1,7 @@
 import * as turf from "@turf/turf";
 import L from "leaflet";
 import { QUARTER_MILE } from "../constants";
+import { stationRegistry } from "../questions/station-registry";
 import { borderGeoJSON } from "./border";
 
 const borderFeature = borderGeoJSON.features[0] as GeoJSON.Feature<
@@ -70,20 +71,28 @@ export function addTrainLayers(map: L.Map): L.LayerGroup {
         const isStation = feature?.properties?.marker_symbol === "station";
 
         if (isStation) {
-          return new L.FeatureGroup([
-            L.circleMarker(latlng, {
-              radius: 5,
-              fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
-              weight: 0,
-              fillOpacity: 1,
-            }),
-            L.circle(latlng, {
-              radius: QUARTER_MILE,
-              fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
-              fillOpacity: 0.25,
-              weight: 0,
-            }),
-          ]);
+          const ll = latlng as L.LatLng;
+          const marker = L.circleMarker(ll, {
+            radius: 5,
+            fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
+            weight: 0,
+            fillOpacity: 1,
+          });
+          const circle = L.circle(ll, {
+            radius: QUARTER_MILE,
+            fillColor: parseColour(feature?.properties?.route_name ?? feature?.properties?.name),
+            fillOpacity: 0.25,
+            weight: 0,
+          });
+          const fg = new L.FeatureGroup([marker, circle]);
+          stationRegistry.register(
+            `train-${feature?.properties?.name ?? feature.id}`,
+            ll,
+            circle,
+            marker,
+            fg,
+          );
+          return fg;
         }
 
         return L.circleMarker(latlng, {

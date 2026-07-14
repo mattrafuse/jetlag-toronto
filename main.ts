@@ -5,6 +5,8 @@ import { addBorderMask } from "./layers/border";
 import { addUserLocation } from "./layers/location";
 import { addSubwayLayers } from "./layers/subway";
 import { addTrainLayers } from "./layers/train";
+import { initQuestions } from "./questions/sidebar";
+import { stationRegistry } from "./questions/station-registry";
 import { initSettings } from "./settings";
 
 const map = L.map("map", { editable: true } as L.MapOptions).setView([43.6532, -79.3832], 12);
@@ -15,9 +17,13 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
     '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
 }).addTo(map);
 
+// Set map on station registry before layers register stations
+stationRegistry.setMap(map);
+
 const borderLayer = addBorderMask(map);
 const subwayLayer = addSubwayLayers(map);
 const trainLayer = addTrainLayers(map);
 const userLocationLayer = addUserLocation(map);
 
 initSettings({ map, trainLayer, subwayLayer, borderLayer, userLocationLayer });
+initQuestions({ map });
