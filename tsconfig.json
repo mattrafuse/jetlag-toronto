@@ -8,7 +8,8 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx"
   },
-  "include": ["main.ts", "vite-env.d.ts"]
+  "include": ["main.ts", "vite-env.d.ts", "questions/**/*.ts", "questions/**/*.tsx"]
 }

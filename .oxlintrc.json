@@ -1,11 +1,17 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "eslint", "react"],
   "categories": {
     "correctness": "error",
     "pedantic": "warn"
   },
-  "rules": { "max-lines-per-function": ["warn", 250], "no-inline-comments": "off" },
+  "rules": {
+    "max-lines-per-function": ["warn", 250],
+    "no-inline-comments": "off",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "max-lines": "off"
+  },
   "env": {
     "builtin": true
   }

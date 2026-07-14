@@ -10,9 +10,6 @@ export const radarQuestions: RadarQuestionDef[] = [
   { type: "radar", distance: 3, label: "3 Miles" },
   { type: "radar", distance: 5, label: "5 Miles" },
   { type: "radar", distance: 10, label: "10 Miles" },
-  { type: "radar", distance: 25, label: "25 Miles" },
-  { type: "radar", distance: 50, label: "50 Miles" },
-  { type: "radar", distance: 100, label: "100 Miles" },
 ];
 
 // ── Thermometer Questions ──────────────────────────────────────
