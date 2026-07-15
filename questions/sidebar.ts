@@ -99,6 +99,13 @@ const applyStationFilter = (): void => {
       }
     }
   }
+  refreshStationStatuses();
+}
+
+// Push the current station exclusion statuses into the store so the
+// sidebar can render the station list.
+const refreshStationStatuses = (): void => {
+  store.update({ stations: stationRegistry.getStationStatuses() });
 }
 
 const processQuestion = (question: AskedQuestion): void => {
@@ -117,6 +124,7 @@ const removeQuestion = (id: string): void => {
   updateExclusionLayer();
   applyStationFilter();
   renderHistory();
+  refreshStationStatuses();
 }
 
 // ── Marker cleanup ─────────────────────────────────────────────
@@ -347,6 +355,7 @@ export const initQuestions = (config: QuestionsConfig): void => {
     store.update({ showRemoved: v });
     saveSettings({ showRemoved: v });
     applyStationFilter();
+    refreshStationStatuses();
   };
 
   // Listen for question removal events from the React UI

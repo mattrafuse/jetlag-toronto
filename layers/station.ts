@@ -19,6 +19,8 @@ export interface StationOptions {
   markerPane?: string;
   /** Pane to render the radius circle in. */
   circlePane?: string;
+  /** Optional text label (station name) rendered permanently above the marker. */
+  label?: string;
 }
 
 export interface CreatedStation {
@@ -50,8 +52,17 @@ export const createStation = (
     ...options.circle,
   });
 
+  if (options.label) {
+    marker.bindTooltip(options.label, {
+      permanent: true,
+      direction: "top",
+      className: "station-label",
+      offset: [0, -4],
+    });
+  }
+
   const group = new L.FeatureGroup([marker, circle]);
-  stationRegistry.register(id, latlng, circle, marker, group);
+  stationRegistry.register(id, options.label ?? id, latlng, circle, marker, group);
 
   return { marker, circle, group };
 };

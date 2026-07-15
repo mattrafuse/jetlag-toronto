@@ -63,9 +63,11 @@ export interface ExclusionZone {
 // ── Registered Station ─────────────────────────────────────────
 export interface RegisteredStation {
   id: string;
+  name: string;
   latlng: L.LatLng;
   circle: L.Circle;
   marker: L.CircleMarker;
   layerGroup: L.FeatureGroup;
   removed: boolean;
+  grayed: boolean;
 }

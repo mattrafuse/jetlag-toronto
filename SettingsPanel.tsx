@@ -3,8 +3,10 @@ import {
   Box,
   Checkbox,
   Collapse,
+  darken,
   FormControlLabel,
   IconButton,
+  lighten,
   Paper,
   Typography,
 } from "@mui/material";
@@ -25,12 +27,17 @@ export const ToggleSettingsButton = () => {
   return (
     <IconButton
       onClick={() => settingsStore.update({ panelOpen: !s.panelOpen })}
-      sx={{
+      sx={(theme) => ({
         bgcolor: "background.paper",
         boxShadow: 2,
-        transition: "right 0.3s ease",
-        "&:hover": { bgcolor: "grey.100" },
-      }}
+        transition: theme.transitions.create("background-color"),
+        "&:hover": {
+          bgcolor:
+            theme.palette.mode === "light"
+              ? darken(theme.palette.background.paper, 0.2)
+              : lighten(theme.palette.background.paper, 0.2),
+        },
+      })}
       aria-label="Toggle settings panel"
     >
       <SettingsIcon />
@@ -49,11 +56,17 @@ export const LocateButton = () => {
   return (
     <IconButton
       onClick={() => focusUserLocation()}
-      sx={{
+      sx={(theme) => ({
         bgcolor: "background.paper",
         boxShadow: 2,
-        "&:hover": { bgcolor: "grey.100" },
-      }}
+        transition: theme.transitions.create("background-color"),
+        "&:hover": {
+          bgcolor:
+            theme.palette.mode === "light"
+              ? darken(theme.palette.background.paper, 0.2)
+              : lighten(theme.palette.background.paper, 0.2),
+        },
+      })}
       aria-label="Focus on my location"
     >
       <MyLocationIcon />
@@ -77,6 +90,7 @@ export const SettingsPanel = () => {
       <Paper
         elevation={8}
         sx={{
+          height: "100%",
           borderRadius: 0,
           transition: "right 0.3s ease",
           display: "flex",
@@ -120,6 +134,21 @@ export const SettingsPanel = () => {
             label={
               <Typography variant="body2" color="text.primary">
                 Dark Mode
+              </Typography>
+            }
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={s.stationLabels}
+                onChange={(e) => settingsCallbacks.toggleStationLabels(e.target.checked)}
+              />
+            }
+            label={
+              <Typography variant="body2" color="text.primary">
+                Show Station Labels
               </Typography>
             }
           />

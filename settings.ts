@@ -1,4 +1,5 @@
 import type L from "leaflet";
+import { stationRegistry } from "./questions/station-registry";
 import { settingsCallbacks, settingsStore } from "./settings-store";
 
 interface SettingsConfig {
@@ -46,6 +47,7 @@ const defaultState: SettingsState = {
   "chk-border": true,
   "chk-location": true,
   "chk-dark": false,
+  "chk-labels": true,
 };
 
 // ── Layer toggle handler ───────────────────────────────────────
@@ -96,7 +98,22 @@ const toggleDarkMode = (checked: boolean): void => {
     config.tileLayer.setUrl(checked ? DARK_TILES : LIGHT_TILES);
   }
 
+  // Toggle a class on the map container so CSS can restyle map UI
+  // (station labels, zoom buttons) for dark mode.
+  config.map.getContainer().classList.toggle("dark-mode", checked);
+
   settingsStore.update({ darkMode: checked });
+}
+
+// ── Station labels toggle handler ─────────────────────────────
+const toggleStationLabels = (checked: boolean): void => {
+  const state = loadSettings();
+  state["chk-labels"] = checked;
+  saveSettings(state);
+
+  stationRegistry.setLabelsVisible(checked);
+
+  settingsStore.update({ stationLabels: checked });
 }
 
 // ── Init ───────────────────────────────────────────────────────
@@ -118,6 +135,7 @@ export const initSettings = (settings: {
   // Wire the callbacks so the React panel can trigger actions
   settingsCallbacks.toggleLayer = toggleLayer;
   settingsCallbacks.toggleDarkMode = toggleDarkMode;
+  settingsCallbacks.toggleStationLabels = toggleStationLabels;
 
   // Load saved state into the store
   const stored = loadSettings();
@@ -128,6 +146,7 @@ export const initSettings = (settings: {
     border: merged["chk-border"],
     location: merged["chk-location"],
     darkMode: merged["chk-dark"],
+    stationLabels: merged["chk-labels"],
   });
 
   // Apply saved state — remove layers whose checkboxes are unchecked
@@ -147,4 +166,10 @@ export const initSettings = (settings: {
   if (config.tileLayer && merged["chk-dark"] === true) {
     config.tileLayer.setUrl(DARK_TILES);
   }
+
+  // Apply saved dark-mode class to the map container
+  config.map.getContainer().classList.toggle("dark-mode", merged["chk-dark"] === true);
+
+  // Apply saved station-label visibility
+  stationRegistry.setLabelsVisible(merged["chk-labels"] !== false);
 }

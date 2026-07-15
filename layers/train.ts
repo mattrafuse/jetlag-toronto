@@ -89,6 +89,7 @@ export const addTrainLayers = (map: L.Map): L.LayerGroup => {
           const colour = parseColour(feature?.properties?.route_name ?? feature?.properties?.name);
           const { group } = createStation(`train-${feature?.properties?.name ?? feature.id}`, ll, {
             fillColor: colour,
+            label: feature?.properties?.name,
           });
           return group;
         }
@@ -125,6 +126,7 @@ export const addTrainLayers = (map: L.Map): L.LayerGroup => {
     const { group: unionGroup } = createStation("train-Union Station GO", unionLatLng, {
       fillColor: "#444",
       circle: { fillColor: "#888", fillOpacity: 0.5 },
+      label: "Union Station GO",
     });
     group.addLayer(unionGroup);
   }

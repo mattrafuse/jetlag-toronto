@@ -1,7 +1,9 @@
 import {
+  CheckCircleOutlined as CheckedIcon,
   HelpOutlined as HelpIcon,
   Radar as RadarIcon,
   Thermostat as ThermoIcon,
+  RadioButtonUnchecked as UncheckedIcon,
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -9,9 +11,11 @@ import {
   Button,
   Checkbox,
   Collapse,
+  darken,
   Divider,
   FormControlLabel,
   IconButton,
+  lighten,
   MenuItem,
   Paper,
   Select,
@@ -54,12 +58,17 @@ export const TogglePanelButton = () => {
   return (
     <IconButton
       onClick={() => store.update({ panelOpen: !s.panelOpen })}
-      sx={{
+      sx={(theme) => ({
         bgcolor: "background.paper",
         boxShadow: 2,
-        transition: "right 0.3s ease",
-        "&:hover": { bgcolor: "grey.100" },
-      }}
+        transition: theme.transitions.create("background-color"),
+        "&:hover": {
+          bgcolor:
+            theme.palette.mode === "light"
+              ? darken(theme.palette.background.paper, 0.2)
+              : lighten(theme.palette.background.paper, 0.2),
+        },
+      })}
       aria-label="Toggle questions panel"
     >
       <HelpIcon />
@@ -98,10 +107,55 @@ const HistoryItem = ({ question }: { question: AskedQuestion }) => {
       <IconButton
         size="small"
         onClick={handleDelete}
-        sx={{ color: "grey.400", "&:hover": { color: "error.main", bgcolor: "error.50" } }}
+        sx={{ color: "text.disabled", "&:hover": { color: "error.main", bgcolor: "action.hover" } }}
       >
         <CloseIcon fontSize="inherit" />
       </IconButton>
+    </Box>
+  );
+};
+
+// ── Station List ───────────────────────────────────────────────
+const StationList = () => {
+  const s = useStore();
+
+  if (s.stations.length === 0) {
+    return (
+      <Typography variant="body2" color="text.disabled" sx={{ fontStyle: "italic", px: 1, py: 1 }}>
+        No stations loaded
+      </Typography>
+    );
+  }
+
+  return (
+    <Box sx={{ px: 1, py: 0.5 }}>
+      {s.stations.map((st) => (
+        <Box
+          key={st.id}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            py: 0.25,
+            px: 1,
+          }}
+        >
+          {st.excluded ? (
+            <CheckedIcon fontSize="small" sx={{ color: "success.main", flexShrink: 0 }} />
+          ) : (
+            <UncheckedIcon fontSize="small" sx={{ color: "text.disabled", flexShrink: 0 }} />
+          )}
+          <Typography
+            variant="caption"
+            sx={{
+              textDecoration: st.excluded ? "line-through" : "none",
+              color: st.excluded ? "text.disabled" : "text.primary",
+            }}
+          >
+            {st.name}
+          </Typography>
+        </Box>
+      ))}
     </Box>
   );
 };
@@ -174,7 +228,7 @@ const RadarForm = () => {
         />
       )}
 
-      <Paper variant="outlined" sx={{ p: 1, bgcolor: "grey.50" }}>
+      <Paper variant="outlined" sx={{ p: 1, bgcolor: "action.hover" }}>
         <Typography variant="body2" color="text.secondary">
           {statusText}
         </Typography>
@@ -264,7 +318,7 @@ const ThermometerForm = () => {
         ))}
       </Select>
 
-      <Paper variant="outlined" sx={{ p: 1, bgcolor: "grey.50" }}>
+      <Paper variant="outlined" sx={{ p: 1, bgcolor: "action.hover" }}>
         <Typography variant="body2" color="text.secondary">
           {statusText}
         </Typography>
@@ -379,6 +433,18 @@ export const SidebarPanel = () => {
           ) : (
             [...s.history].reverse().map((q) => <HistoryItem key={q.id} question={q} />)
           )}
+        </Box>
+
+        <Divider />
+
+        {/* Station list */}
+        <Box sx={{ px: 2, pt: 1 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.secondary">
+            Stations
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, overflow: "auto", maxHeight: 200 }}>
+          <StationList />
         </Box>
 
         <Divider />

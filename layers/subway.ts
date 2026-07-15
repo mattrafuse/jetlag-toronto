@@ -52,6 +52,12 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
       isModern: true,
       pointToLayer: (_feature, latlng) => {
         const ll = latlng as L.LatLng;
+        const rawName = _feature.properties?.STOP_NAME ?? "";
+        const label = rawName
+          .replace(/Eastbound Platform/g, "")
+          .replace(/LRT Station/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
         const { group } = createStation(
           `subway-line5-${_feature.properties?.OBJECTID ?? _feature.id}`,
           ll,
@@ -59,6 +65,7 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
             fillColor: "#FF8000",
             markerPane: "subwayStations",
             circlePane: "subwayRadius",
+            label,
           },
         );
         return group;
@@ -84,6 +91,8 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
           }
         });
 
+        console.log(closest);
+
         if (!turf.booleanPointInPolygon(feature.geometry, borderFeature)) {
           return L.circleMarker(latlng, {
             opacity: 0,
@@ -93,10 +102,13 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
 
         const ll = latlng as L.LatLng;
         const colour = `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`;
+        const rawName = feature.properties?.PT_NAME ?? "";
+        const label = rawName.toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
         const { group } = createStation(`subway-${feature.properties?.STOP_ID ?? feature.id}`, ll, {
           fillColor: colour,
           markerPane: "subwayStations",
           circlePane: "subwayRadius",
+          label,
         });
         return group;
       },

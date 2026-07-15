@@ -20,6 +20,9 @@ export interface QuestionsState {
   // History
   history: AskedQuestion[];
 
+  // Station exclusion status (alphabetical), for the sidebar list
+  stations: { id: string; name: string; excluded: boolean }[];
+
   // Settings
   showRemoved: boolean;
 }
@@ -38,6 +41,7 @@ const initialState: QuestionsState = {
   thermoDistance: 0.5,
 
   history: [],
+  stations: [],
   showRemoved: false,
 };
 
