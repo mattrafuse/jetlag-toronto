@@ -6,9 +6,12 @@ import { Stack } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import { createRoot } from "react-dom/client";
-import { SidebarPanel, TogglePanelButton } from "./questions/SidebarPanel";
+import { LocateButton } from "./components/settings/LocateButton";
+import { ToggleSettingsButton } from "./components/settings/ToggleSettingsButton";
+import { TogglePanelButton } from "./components/sidebar/TogglePanelButton";
+import { SettingsPanel } from "./panels/SettingsPanel";
+import { SidebarPanel } from "./panels/SidebarPanel";
 import { settingsStore } from "./settings-store";
-import { LocateButton, SettingsPanel, ToggleSettingsButton } from "./SettingsPanel";
 import { createAppTheme } from "./theme";
 
 let root: ReturnType<typeof createRoot> | null = null;

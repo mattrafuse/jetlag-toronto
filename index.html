@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jetlag Map</title>
     <link rel="icon" type="image/webp" href="static/favicon.webp" />
+    <script>
+      // Apply the saved theme background before first paint to avoid a white
+      // flash on reload. Mirrors the `chk-dark` setting in localStorage
+      // (key "jetlag-map-settings"), which defaults to light.
+      (function () {
+        try {
+          var raw = localStorage.getItem("jetlag-map-settings");
+          var dark = raw ? JSON.parse(raw)["chk-dark"] === true : false;
+          document.documentElement.style.background = dark ? "#1b1b1b" : "#ffffff";
+        } catch (e) {
+          document.documentElement.style.background = "#ffffff";
+        }
+      })();
+    </script>
     <style>
       * {
         margin: 0;
@@ -19,6 +33,12 @@
       #map {
         height: 100%;
         width: 100%;
+      }
+
+      /* Let the theme background (set on <html> before first paint) show
+         through until map tiles load, instead of Leaflet's default grey. */
+      .leaflet-container {
+        background: transparent;
       }
 
       #app-overlay {

@@ -10,6 +10,7 @@ export interface SettingsState {
   location: boolean;
   darkMode: boolean;
   stationLabels: boolean;
+  borderEditable: boolean;
 }
 
 const initialState: SettingsState = {
@@ -20,6 +21,7 @@ const initialState: SettingsState = {
   location: true,
   darkMode: false,
   stationLabels: true,
+  borderEditable: false,
 };
 
 type Listener = () => void;
@@ -55,10 +57,14 @@ export interface SettingsCallbacks {
   ) => void;
   toggleDarkMode: (checked: boolean) => void;
   toggleStationLabels: (checked: boolean) => void;
+  toggleBorderEditable: (checked: boolean) => void;
+  exportBorder: () => void;
 }
 
 export const settingsCallbacks: SettingsCallbacks = {
   toggleLayer: () => {},
   toggleDarkMode: () => {},
   toggleStationLabels: () => {},
+  toggleBorderEditable: () => {},
+  exportBorder: () => {},
 };

@@ -29,6 +29,7 @@ let thermoStart: [number, number] | null = null;
 let thermoEnd: [number, number] | null = null;
 let thermoStartMarker: L.Marker | null = null;
 let thermoEndMarker: L.Marker | null = null;
+let thermoLine: L.Polyline | null = null;
 let mapClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null;
 
 let radarCenter: [number, number] | null = null;
@@ -49,10 +50,10 @@ const loadHistory = (): AskedQuestion[] => {
     /* ignore */
   }
   return [];
-}
+};
 const saveHistory = (h: AskedQuestion[]): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
-}
+};
 const loadSettings = (): { showRemoved: boolean } => {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
@@ -61,15 +62,15 @@ const loadSettings = (): { showRemoved: boolean } => {
     /* ignore */
   }
   return { showRemoved: false };
-}
+};
 const saveSettings = (s: { showRemoved: boolean }): void => {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-}
+};
 
 let questionCounter = 0;
 const nextId = (): string => {
   return `q-${Date.now()}-${++questionCounter}`;
-}
+};
 
 // ── Exclusion Layer ────────────────────────────────────────────
 const updateExclusionLayer = (): void => {
@@ -82,7 +83,7 @@ const updateExclusionLayer = (): void => {
       style: { color: "#ff4444", weight: 2, fillColor: "#ff4444", fillOpacity: 0.15 },
     }).addTo(map);
   }
-}
+};
 
 // ── Station Filtering ──────────────────────────────────────────
 const applyStationFilter = (): void => {
@@ -100,13 +101,13 @@ const applyStationFilter = (): void => {
     }
   }
   refreshStationStatuses();
-}
+};
 
 // Push the current station exclusion statuses into the store so the
 // sidebar can render the station list.
 const refreshStationStatuses = (): void => {
   store.update({ stations: stationRegistry.getStationStatuses() });
-}
+};
 
 const processQuestion = (question: AskedQuestion): void => {
   const polygon =
@@ -116,7 +117,7 @@ const processQuestion = (question: AskedQuestion): void => {
   exclusionZones.push({ polygon, sourceQuestion: question });
   updateExclusionLayer();
   applyStationFilter();
-}
+};
 
 const removeQuestion = (id: string): void => {
   exclusionZones = exclusionZones.filter((z) => z.sourceQuestion.id !== id);
@@ -125,7 +126,7 @@ const removeQuestion = (id: string): void => {
   applyStationFilter();
   renderHistory();
   refreshStationStatuses();
-}
+};
 
 // ── Marker cleanup ─────────────────────────────────────────────
 const clearRadarMarker = (): void => {
@@ -138,7 +139,7 @@ const clearRadarMarker = (): void => {
     radarRadiusPreview = null;
   }
   radarCenter = null;
-}
+};
 const clearThermoMarkers = (): void => {
   if (thermoStartMarker) {
     map.removeLayer(thermoStartMarker);
@@ -147,6 +148,10 @@ const clearThermoMarkers = (): void => {
   if (thermoEndMarker) {
     map.removeLayer(thermoEndMarker);
     thermoEndMarker = null;
+    if (thermoLine) {
+      map.removeLayer(thermoLine);
+      thermoLine = null;
+    }
   }
   thermoStart = null;
   thermoEnd = null;
@@ -154,13 +159,13 @@ const clearThermoMarkers = (): void => {
     map.off("click", mapClickHandler);
     mapClickHandler = null;
   }
-}
+};
 
 // ── History rendering ──────────────────────────────────────────
 const renderHistory = (): void => {
   const history = loadHistory();
   store.update({ history });
-}
+};
 
 // ── Tab switching ──────────────────────────────────────────────
 const switchTab = (tab: "radar" | "thermometer"): void => {
@@ -172,7 +177,7 @@ const switchTab = (tab: "radar" | "thermometer"): void => {
     clearRadarMarker();
     startThermoPicking();
   }
-}
+};
 
 // ── Radar submission ───────────────────────────────────────────
 const submitRadar = (answer: "yes" | "no"): void => {
@@ -204,7 +209,7 @@ const submitRadar = (answer: "yes" | "no"): void => {
   renderHistory();
   clearRadarMarker();
   store.update({ radarCenter: null });
-}
+};
 
 // ── Thermometer submission ─────────────────────────────────────
 const submitThermometer = (answer: "hotter" | "colder"): void => {
@@ -227,12 +232,12 @@ const submitThermometer = (answer: "hotter" | "colder"): void => {
   renderHistory();
   clearThermoMarkers();
   store.update({ thermoStart: null, thermoEnd: null });
-}
+};
 
 // ── Radar UI ───────────────────────────────────────────────────
 const setRadarCenter = (center: [number, number] | null): void => {
   store.update({ radarCenter: center });
-}
+};
 
 // Draw a circle previewing the radar radius based on the selected distance.
 const updateRadarRadiusPreview = (): void => {
@@ -256,44 +261,45 @@ const updateRadarRadiusPreview = (): void => {
     fillColor: "#3388ff",
     fillOpacity: 0.08,
   }).addTo(map);
-}
+};
 
 // ── Thermometer UI ─────────────────────────────────────────────
 const setThermoStart = (start: [number, number] | null): void => {
   store.update({ thermoStart: start });
-}
+};
 const setThermoEnd = (end: [number, number] | null): void => {
   store.update({ thermoEnd: end });
-}
+};
 
 const startRadarPicking = (): void => {
   clearRadarMarker();
   store.update({ radarCenter: null });
   mapClickHandler = (e: L.LeafletMouseEvent) => {
-    if (radarCenter) return;
+    const s = store.get();
+    if (!s.panelOpen || s.activeTab !== "radar") return;
     radarCenter = [e.latlng.lat, e.latlng.lng];
-    radarCenterMarker = L.marker(e.latlng, {
-      icon: L.divIcon({
-        className: "questions-radar-marker",
-        html: `
-          <div class="questions-radar-bullseye">
-            <span class="ring ring-outer"></span>
-            <span class="ring ring-mid"></span>
-            <span class="ring ring-inner"></span>
-          </div>`,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
-      }),
-    }).addTo(map);
+    if (radarCenterMarker) {
+      radarCenterMarker.setLatLng(e.latlng);
+    } else {
+      radarCenterMarker = L.marker(e.latlng, {
+        icon: L.divIcon({
+          className: "questions-radar-marker",
+          html: `
+            <div class="questions-radar-bullseye">
+              <span class="ring ring-outer"></span>
+              <span class="ring ring-mid"></span>
+              <span class="ring ring-inner"></span>
+            </div>`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+        }),
+      }).addTo(map);
+    }
     updateRadarRadiusPreview();
     setRadarCenter(radarCenter);
-    if (mapClickHandler) {
-      map.off("click", mapClickHandler);
-      mapClickHandler = null;
-    }
   };
   map.on("click", mapClickHandler);
-}
+};
 
 const startThermoPicking = (): void => {
   clearThermoMarkers();
@@ -321,7 +327,7 @@ const startThermoPicking = (): void => {
         }),
       }).addTo(map);
       if (thermoStartMarker) {
-        L.polyline([thermoStartMarker.getLatLng(), e.latlng], {
+        thermoLine = L.polyline([thermoStartMarker.getLatLng(), e.latlng], {
           color: "#3388ff",
           weight: 2,
           dashArray: "5, 5",
@@ -336,7 +342,7 @@ const startThermoPicking = (): void => {
     }
   };
   map.on("click", mapClickHandler);
-}
+};
 
 // ── Init ───────────────────────────────────────────────────────
 export const initQuestions = (config: QuestionsConfig): void => {
@@ -383,4 +389,4 @@ export const initQuestions = (config: QuestionsConfig): void => {
   store.subscribe(() => {
     if (radarCenter) updateRadarRadiusPreview();
   });
-}
+};

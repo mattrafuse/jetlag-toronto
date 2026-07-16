@@ -5,12 +5,9 @@ import L from "leaflet";
 import { borderGeoJSON } from "./border";
 import { createStation } from "./station";
 
-const borderFeature = borderGeoJSON.features[0] as GeoJSON.Feature<
-  GeoJSON.Polygon,
-  Record<string, unknown>
->;
+const borderFeature = borderGeoJSON as GeoJSON.Feature<GeoJSON.Polygon, Record<string, unknown>>;
 
-export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
+export const addSubwayLayers = (map: L.Map, onReady?: () => void): L.LayerGroup => {
   const group = L.layerGroup();
 
   // ── Custom panes for proper stacking ────────────────────────────
@@ -56,6 +53,7 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
         const label = rawName
           .replace(/Eastbound Platform/g, "")
           .replace(/LRT Station/g, "")
+          .replace(/LRT Platform/g, "")
           .replace(/\s+/g, " ")
           .trim();
         const { group } = createStation(
@@ -74,46 +72,50 @@ export const addSubwayLayers = (map: L.Map): L.LayerGroup => {
   );
 
   // ── TTC Subway Stations (ArcGIS) ───────────────────────────────
-  group.addLayer(
-    featureLayer({
-      url: "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial7/mapserver/8",
-      isModern: true,
-      pointToLayer: (feature, latlng) => {
-        let closest: [number, Feature<LineString>] | null = null;
-        routes.eachFeature((subwayLine) => {
-          if (![4, 5, 6].includes(subwayLine.feature.properties?.ROUTE_ID)) {
-            const currentDistance = turf.nearestPointOnLine(subwayLine.feature, feature).properties
-              .pointDistance;
+  const stationsLayer = featureLayer({
+    url: "https://gis.toronto.ca/arcgis/rest/services/cot_geospatial7/mapserver/8",
+    isModern: true,
+    pointToLayer: (feature, latlng) => {
+      let closest: [number, Feature<LineString>] | null = null;
+      routes.eachFeature((subwayLine) => {
+        if (![4, 5, 6].includes(subwayLine.feature.properties?.ROUTE_ID)) {
+          const currentDistance = turf.nearestPointOnLine(subwayLine.feature, feature).properties
+            .pointDistance;
 
-            if (!closest || closest[0] > currentDistance) {
-              closest = [currentDistance, subwayLine.feature as Feature<LineString>];
-            }
+          if (!closest || closest[0] > currentDistance) {
+            closest = [currentDistance, subwayLine.feature as Feature<LineString>];
           }
-        });
-
-        console.log(closest);
-
-        if (!turf.booleanPointInPolygon(feature.geometry, borderFeature)) {
-          return L.circleMarker(latlng, {
-            opacity: 0,
-            fillOpacity: 0,
-          });
         }
+      });
 
-        const ll = latlng as L.LatLng;
-        const colour = `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`;
-        const rawName = feature.properties?.PT_NAME ?? "";
-        const label = rawName.toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
-        const { group } = createStation(`subway-${feature.properties?.STOP_ID ?? feature.id}`, ll, {
-          fillColor: colour,
-          markerPane: "subwayStations",
-          circlePane: "subwayRadius",
-          label,
+      if (turf.booleanPointInPolygon(feature.geometry, borderFeature)) {
+        return L.circleMarker(latlng, {
+          opacity: 0,
+          fillOpacity: 0,
         });
-        return group;
-      },
-    }),
-  );
+      }
+
+      const ll = latlng as L.LatLng;
+      const colour = `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`;
+      const rawName = feature.properties?.PT_NAME ?? "";
+      const label = rawName.toLowerCase().replace(/\b\w/g, (c: string) => c.toUpperCase());
+      const { group } = createStation(`subway-${feature.properties?.STOP_ID ?? feature.id}`, ll, {
+        fillColor: colour,
+        markerPane: "subwayStations",
+        circlePane: "subwayRadius",
+        label,
+      });
+      return group;
+    },
+  });
+
+  // Fire onReady once the stations have loaded and registered, so the caller
+  // can perform cross-layer work (e.g. merging hub stations) after all
+  // stations are present.
+  if (onReady) {
+    stationsLayer.on("load", onReady);
+  }
+  group.addLayer(stationsLayer);
 
   group.addTo(map);
   return group;

@@ -42,7 +42,7 @@ export const computeRadarExclusion = (
   const holeRing = circle.geometry.coordinates[0];
 
   return turf.polygon([outerRing, holeRing]);
-}
+};
 
 /**
  * Compute the exclusion polygon for a thermometer question.
@@ -121,7 +121,7 @@ export const computeThermometerExclusion = (
   const far2: [number, number] = [p2[0] + sideDx * EXTENT, p2[1] + sideDy * EXTENT];
 
   return turf.polygon([[p1, p2, far2, far1, p1]]);
-}
+};
 
 /**
  * Union multiple exclusion polygons into a single cumulative polygon.
@@ -151,4 +151,4 @@ export const unionExclusionZones = (
   }
 
   return result;
-}
+};

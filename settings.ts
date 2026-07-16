@@ -1,4 +1,5 @@
 import type L from "leaflet";
+import { exportBorderGeoJSON, setBorderEditable } from "./layers/border";
 import { stationRegistry } from "./questions/station-registry";
 import { settingsCallbacks, settingsStore } from "./settings-store";
 
@@ -35,11 +36,11 @@ const loadSettings = (): SettingsState => {
     // Ignore corrupt data
   }
   return {};
-}
+};
 
 const saveSettings = (state: SettingsState): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+};
 
 const defaultState: SettingsState = {
   "chk-trains": true,
@@ -75,6 +76,21 @@ const toggleLayer = (
     config.map.removeLayer(layer);
   }
 
+  // Hub stations (e.g. Union, Kennedy) are merged across the train and subway
+  // layers and added directly to the map, so they aren't children of either
+  // layer group. Hide a hub station when either of its source layers is off.
+  if (id === "chk-trains" || id === "chk-subway") {
+    const otherLayerOn =
+      id === "chk-trains"
+        ? loadSettings()["chk-subway"] !== false
+        : loadSettings()["chk-trains"] !== false;
+    if (!checked || !otherLayerOn) {
+      stationRegistry.setHubStationsVisible(false);
+    } else {
+      stationRegistry.setHubStationsVisible(true);
+    }
+  }
+
   // Keep the reactive store in sync so the checkbox reflects the new state
   const storeKeyMap = {
     "chk-trains": "trains",
@@ -86,7 +102,7 @@ const toggleLayer = (
   if (storeKey) {
     settingsStore.update({ [storeKey]: checked });
   }
-}
+};
 
 // ── Dark mode toggle handler ───────────────────────────────────
 const toggleDarkMode = (checked: boolean): void => {
@@ -103,7 +119,7 @@ const toggleDarkMode = (checked: boolean): void => {
   config.map.getContainer().classList.toggle("dark-mode", checked);
 
   settingsStore.update({ darkMode: checked });
-}
+};
 
 // ── Station labels toggle handler ─────────────────────────────
 const toggleStationLabels = (checked: boolean): void => {
@@ -114,7 +130,18 @@ const toggleStationLabels = (checked: boolean): void => {
   stationRegistry.setLabelsVisible(checked);
 
   settingsStore.update({ stationLabels: checked });
-}
+};
+
+// ── Border editable toggle handler ────────────────────────────
+const toggleBorderEditable = (checked: boolean): void => {
+  setBorderEditable(checked);
+  settingsStore.update({ borderEditable: checked });
+};
+
+// ── Border export handler ─────────────────────────────────────
+const exportBorder = (): void => {
+  exportBorderGeoJSON();
+};
 
 // ── Init ───────────────────────────────────────────────────────
 export const initSettings = (settings: {
@@ -125,6 +152,8 @@ export const initSettings = (settings: {
   userLocationLayer?: L.Layer | null;
   tileLayer?: L.TileLayer | null;
 }): void => {
+  settingsCallbacks.toggleBorderEditable = toggleBorderEditable;
+  settingsCallbacks.exportBorder = exportBorder;
   config.map = settings.map;
   config.trainLayer = settings.trainLayer ?? null;
   config.subwayLayer = settings.subwayLayer ?? null;
@@ -172,4 +201,4 @@ export const initSettings = (settings: {
 
   // Apply saved station-label visibility
   stationRegistry.setLabelsVisible(merged["chk-labels"] !== false);
-}
+};

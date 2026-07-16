@@ -1,6 +1,8 @@
 import * as turf from "@turf/turf";
-import type L from "leaflet";
+import L from "leaflet";
 import { QUARTER_MILE } from "../constants";
+import { findHub, HUBS, hubStationOptions } from "../layers/hubs";
+import { createStation } from "../layers/station";
 import type { RegisteredStation } from "./types";
 
 // ── Station Registry ───────────────────────────────────────────
@@ -16,9 +18,17 @@ class StationRegistry {
   private removedIds: Set<string> = new Set();
   private grayedIds: Set<string> = new Set();
 
-  // Whether station name labels (tooltips) are shown. When false, labels are
-  // closed even for visible, non-grayed stations.
-  private labelsVisible = true;
+  // Pending hub members: stations whose name matches a hub definition but whose
+  // merged entry has not yet been created. Keyed by hub id. We buffer them so
+  // that stations arriving from different layers (e.g. TTC subway vs GO train)
+  // can be averaged into a single merged marker.
+  private hubMembers: Map<string, RegisteredStation[]> = new Map();
+
+  // Hubs that have already been merged. Used to keep mergeHubs idempotent in
+  // the face of esri-leaflet re-registration (subway markers are re-created and
+  // re-registered on every zoom/move). Once a hub is merged, any later member
+  // registration is simply hidden rather than buffered again.
+  private mergedHubs: Set<string> = new Set();
 
   setMap(map: L.Map): void {
     this.map = map;
@@ -31,6 +41,7 @@ class StationRegistry {
     circle: L.Circle,
     marker: L.CircleMarker,
     layerGroup: L.FeatureGroup,
+    options?: { __skipHub?: boolean },
   ): void {
     const wasRemoved = this.removedIds.has(id);
     const wasGrayed = this.grayedIds.has(id);
@@ -45,6 +56,35 @@ class StationRegistry {
       removed: wasRemoved,
       grayed: wasGrayed,
     };
+
+    // If this station belongs to a hub (and isn't the merged hub station
+    // itself), buffer it instead of registering it directly. We merge all
+    // members into a single averaged entry once they've all arrived.
+    const hub = options?.__skipHub ? undefined : findHub(name);
+    if (hub) {
+      if (this.mergedHubs.has(hub.id)) {
+        // Hub already merged (e.g. subway re-registered on zoom/move, or a
+        // member arrived after the synchronous pre-subway merge). Hide this
+        // duplicate member and unbind its tooltip so it doesn't linger.
+        this.setHidden(station, true);
+        station.marker.unbindTooltip();
+        return;
+      }
+
+      const members = this.hubMembers.get(hub.id) ?? [];
+      members.push(station);
+      this.hubMembers.set(hub.id, members);
+
+      // Re-apply persistent exclusion state to the buffered member so it stays
+      // consistent with the merged entry once created.
+      if (wasRemoved) {
+        this.setHidden(station, true);
+      } else if (wasGrayed) {
+        this.grayOutStation(id);
+      }
+      return;
+    }
+
     this.stations.set(id, station);
 
     // Re-apply persistent exclusion state to the freshly created layer.
@@ -57,6 +97,55 @@ class StationRegistry {
     }
     // Global label visibility is handled via a CSS class on the map container
     // (see setLabelsVisible), so no per-marker work is needed here.
+  }
+
+  /**
+   * Merge every buffered hub member into a single averaged station entry.
+   * Call this once all layers have finished registering their stations. Each
+   * hub produces one `hub-<id>` station at the mean of its members' positions;
+   * the individual member markers are hidden (not removed, so esri-leaflet
+   * re-renders can't resurrect them) and folded into the merged entry.
+   */
+  mergeHubs(): void {
+    for (const [hubId, members] of this.hubMembers) {
+      if (members.length === 0) continue;
+
+      const hub = HUBS.find((h) => h.id === hubId)!;
+      const avgLat = members.reduce((s, m) => s + m.latlng.lat, 0) / members.length;
+      const avgLng = members.reduce((s, m) => s + m.latlng.lng, 0) / members.length;
+      const mergedLatLng = L.latLng(avgLat, avgLng);
+
+      const { group: mergedGroup } = createStation(`hub-${hub.id}`, mergedLatLng, {
+        ...hubStationOptions(hub),
+      });
+
+      // Add the merged marker to the map and hide the individual member markers
+      // (keep them on the map so esri re-renders can't undo the merge).
+      if (this.map) {
+        mergedGroup.addTo(this.map);
+      }
+      for (const member of members) {
+        this.setHidden(member, true);
+        // The member's permanent tooltip would otherwise linger on the map even
+        // though the marker is invisible, so unbind it entirely.
+        member.marker.unbindTooltip();
+      }
+
+      const merged: RegisteredStation = {
+        id: `hub-${hub.id}`,
+        name: hub.label,
+        latlng: mergedLatLng,
+        circle: mergedGroup.getLayers()[1] as L.Circle,
+        marker: mergedGroup.getLayers()[0] as L.CircleMarker,
+        layerGroup: mergedGroup,
+        removed: false,
+        grayed: false,
+      };
+      this.stations.set(merged.id, merged);
+      this.mergedHubs.add(hub.id);
+    }
+
+    this.hubMembers.clear();
   }
 
   getAll(): RegisteredStation[] {
@@ -72,9 +161,21 @@ class StationRegistry {
    * class on the container hides labels no matter when the marker is added.
    */
   setLabelsVisible(visible: boolean): void {
-    this.labelsVisible = visible;
     if (this.map) {
       this.map.getContainer().classList.toggle("hide-station-labels", !visible);
+    }
+  }
+
+  /**
+   * Show or hide all merged hub stations (e.g. Union, Kennedy). These are added
+   * directly to the map rather than to a layer group, so the layer toggles in
+   * settings.ts call this to keep them in sync with the train/subway layers.
+   */
+  setHubStationsVisible(visible: boolean): void {
+    for (const station of this.stations.values()) {
+      if (station.id.startsWith("hub-")) {
+        this.setHidden(station, !visible);
+      }
     }
   }
 

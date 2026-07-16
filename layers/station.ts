@@ -21,6 +21,12 @@ export interface StationOptions {
   circlePane?: string;
   /** Optional text label (station name) rendered permanently above the marker. */
   label?: string;
+  /**
+   * Internal flag: when true, the station registry will NOT attempt to merge
+   * this station into a hub. Used when creating the merged hub station itself
+   * to avoid infinite recursion.
+   */
+  __skipHub?: boolean;
 }
 
 export interface CreatedStation {
@@ -62,7 +68,9 @@ export const createStation = (
   }
 
   const group = new L.FeatureGroup([marker, circle]);
-  stationRegistry.register(id, options.label ?? id, latlng, circle, marker, group);
+  stationRegistry.register(id, options.label ?? id, latlng, circle, marker, group, {
+    __skipHub: options.__skipHub,
+  });
 
   return { marker, circle, group };
 };

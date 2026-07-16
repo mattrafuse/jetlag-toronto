@@ -22,9 +22,14 @@ const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{
 stationRegistry.setMap(map);
 
 const borderLayer = addBorderMask(map);
-const subwayLayer = addSubwayLayers(map);
+const subwayLayer = addSubwayLayers(map, () => stationRegistry.mergeHubs());
 const trainLayer = addTrainLayers(map);
 const userLocationLayer = addUserLocation(map);
+
+// Train (and any synchronous) layers have already registered their stations by
+// this point; mergeHubs() is also called once the async subway layer finishes
+// loading (see addSubwayLayers onReady callback above).
+stationRegistry.mergeHubs();
 
 initSettings({ map, trainLayer, subwayLayer, borderLayer, userLocationLayer, tileLayer });
 initOverlay();

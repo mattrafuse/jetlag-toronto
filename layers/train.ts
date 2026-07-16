@@ -3,10 +3,7 @@ import L from "leaflet";
 import { borderGeoJSON } from "./border";
 import { createStation } from "./station";
 
-const borderFeature = borderGeoJSON.features[0] as GeoJSON.Feature<
-  GeoJSON.Polygon,
-  Record<string, unknown>
->;
+const borderFeature = borderGeoJSON as GeoJSON.Feature<GeoJSON.Polygon, Record<string, unknown>>;
 
 // Vite glob‑import all Metrolinx GO / UP Express train GeoJSON files
 const geojsonModules: Record<string, string> = import.meta.glob("./shapes/metrolinx/*.geojson", {
@@ -46,10 +43,9 @@ const parseColour = (name?: string) => {
   return colour;
 };
 
-// Union Station appears as a station on nearly every GO corridor, each with
-// slightly different coordinates. We merge them into a single averaged entry.
-const isUnionStation = (feature: GeoJSON.Feature): boolean =>
-  !!feature?.properties?.name?.includes("Union Station");
+// Union Station (and other hub stations) are merged across layers by the
+// station registry's hub logic (see layers/hubs.ts), so no special-casing is
+// needed here.
 
 export const addTrainLayers = (map: L.Map): L.LayerGroup => {
   const group = L.layerGroup();
@@ -59,10 +55,6 @@ export const addTrainLayers = (map: L.Map): L.LayerGroup => {
   const radiusPane = map.getPane("trainRadius")!;
   radiusPane.style.zIndex = "405";
 
-  // Collect Union Station positions across all corridors so we can merge them
-  // into a single averaged entry instead of one per line.
-  const unionPoints: L.LatLng[] = [];
-
   for (const data of Object.values(geojsonModules)) {
     const collection: GeoJSON.FeatureCollection = JSON.parse(data);
 
@@ -70,13 +62,7 @@ export const addTrainLayers = (map: L.Map): L.LayerGroup => {
       coordsToLatLng: (coords: [number, number]) => L.latLng(coords[1], coords[0]),
       filter: (feature) => {
         if (feature.geometry.type === "Point") {
-          if (isUnionStation(feature)) {
-            const [lng, lat] = feature.geometry.coordinates as [number, number];
-            unionPoints.push(L.latLng(lat, lng));
-            return false;
-          }
-
-          return turf.booleanPointInPolygon(feature.geometry, borderFeature);
+          return !turf.booleanPointInPolygon(feature.geometry, borderFeature);
         }
 
         return true;
@@ -117,20 +103,6 @@ export const addTrainLayers = (map: L.Map): L.LayerGroup => {
     group.addLayer(geojsonLayer);
   }
 
-  // Add a single merged Union Station entry at the average of all corridor positions.
-  if (unionPoints.length > 0) {
-    const avgLat = unionPoints.reduce((s, ll) => s + ll.lat, 0) / unionPoints.length;
-    const avgLng = unionPoints.reduce((s, ll) => s + ll.lng, 0) / unionPoints.length;
-    const unionLatLng = L.latLng(avgLat, avgLng);
-
-    const { group: unionGroup } = createStation("train-Union Station GO", unionLatLng, {
-      fillColor: "#444",
-      circle: { fillColor: "#888", fillOpacity: 0.5 },
-      label: "Union Station GO",
-    });
-    group.addLayer(unionGroup);
-  }
-
   group.addTo(map);
   return group;
-}
+};
