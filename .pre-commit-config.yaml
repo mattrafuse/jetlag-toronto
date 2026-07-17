@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: oxlint-oxfmt
+        name: oxlint and oxfmt
+        entry: ./scripts/pre-commit.sh
+        language: script
+        types: [ts, tsx]
+        pass_filenames: false
