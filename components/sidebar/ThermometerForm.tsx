@@ -1,7 +1,12 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { callbacks, roundCoord, store, thermometerQuestions } from "../../questions";
+import {
+  questionsCallbacks,
+  questionsStore,
+  roundCoord,
+  thermometerQuestions,
+} from "../../questions";
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
-import { useStore } from "./useStore";
+import { useQuestionsStore } from "./useQuestionsStore";
 import { usedThermometerDistances } from "./usedDistances";
 
 // ── Coordinate input helper ────────────────────────────────────
@@ -27,53 +32,53 @@ const CoordField = ({
 
 // ── Thermometer Form ───────────────────────────────────────────
 export const ThermometerForm = () => {
-  const s = useStore();
+  const s = useQuestionsStore();
   const used = usedThermometerDistances(s.history);
 
   const handleDistanceChange = (val: string) => {
     const num = Number(val);
     if (!Number.isNaN(num)) {
-      store.update({ thermoDistance: num });
-      callbacks.clearThermoMarkers();
-      callbacks.startThermoPicking();
+      questionsStore.update({ thermoDistance: num });
+      questionsCallbacks.clearThermoMarkers();
+      questionsCallbacks.startThermoPicking();
     }
   };
 
   const handleReset = () => {
-    callbacks.clearThermoMarkers();
-    callbacks.startThermoPicking();
+    questionsCallbacks.clearThermoMarkers();
+    questionsCallbacks.startThermoPicking();
   };
 
   const handleStartLatChange = (val: string) => {
-    store.update({ thermoStartLat: val });
+    questionsStore.update({ thermoStartLat: val });
     const lat = Number(val);
     const lng = Number(s.thermoStartLng);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setThermoStart(lat, lng);
+    questionsCallbacks.setThermoStart(lat, lng);
   };
 
   const handleStartLngChange = (val: string) => {
-    store.update({ thermoStartLng: val });
+    questionsStore.update({ thermoStartLng: val });
     const lat = Number(s.thermoStartLat);
     const lng = Number(val);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setThermoStart(lat, lng);
+    questionsCallbacks.setThermoStart(lat, lng);
   };
 
   const handleEndLatChange = (val: string) => {
-    store.update({ thermoEndLat: val });
+    questionsStore.update({ thermoEndLat: val });
     const lat = Number(val);
     const lng = Number(s.thermoEndLng);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setThermoEnd(lat, lng);
+    questionsCallbacks.setThermoEnd(lat, lng);
   };
 
   const handleEndLngChange = (val: string) => {
-    store.update({ thermoEndLng: val });
+    questionsStore.update({ thermoEndLng: val });
     const lat = Number(s.thermoEndLat);
     const lng = Number(val);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setThermoEnd(lat, lng);
+    questionsCallbacks.setThermoEnd(lat, lng);
   };
 
   const statusText = s.thermoStart
@@ -116,11 +121,11 @@ export const ThermometerForm = () => {
         <GoogleMapsUrlField
           label="Or paste a Google Maps URL to set the start"
           onResolved={(lat, lng) => {
-            store.update({
+            questionsStore.update({
               thermoStartLat: String(roundCoord(lat)),
               thermoStartLng: String(roundCoord(lng)),
             });
-            callbacks.setThermoStart(lat, lng);
+            questionsCallbacks.setThermoStart(lat, lng);
           }}
         />
         <Typography variant="caption" color="text.secondary">
@@ -133,11 +138,11 @@ export const ThermometerForm = () => {
         <GoogleMapsUrlField
           label="Or paste a Google Maps URL to set the end"
           onResolved={(lat, lng) => {
-            store.update({
+            questionsStore.update({
               thermoEndLat: String(roundCoord(lat)),
               thermoEndLng: String(roundCoord(lng)),
             });
-            callbacks.setThermoEnd(lat, lng);
+            questionsCallbacks.setThermoEnd(lat, lng);
           }}
         />
       </Box>
@@ -161,7 +166,7 @@ export const ThermometerForm = () => {
             fullWidth
             variant="contained"
             color="success"
-            onClick={() => callbacks.submitThermo("hotter")}
+            onClick={() => questionsCallbacks.submitThermo("hotter")}
           >
             Hotter
           </Button>
@@ -170,7 +175,7 @@ export const ThermometerForm = () => {
             fullWidth
             variant="contained"
             color="error"
-            onClick={() => callbacks.submitThermo("colder")}
+            onClick={() => questionsCallbacks.submitThermo("colder")}
           >
             Colder
           </Button>

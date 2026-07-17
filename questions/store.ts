@@ -70,7 +70,7 @@ type Listener = () => void;
 const state: QuestionsState = { ...initialState };
 const listeners = new Set<Listener>();
 
-export const store = {
+export const questionsStore = {
   get(): QuestionsState {
     return state;
   },
@@ -91,7 +91,7 @@ export const store = {
 // ── Callback registry ──────────────────────────────────────────
 // sidebar.ts sets these; React components call them.
 
-export interface SidebarCallbacks {
+export interface QuestionsCallbacks {
   submitRadar: (answer: "yes" | "no") => void;
   submitThermo: (answer: "hotter" | "colder") => void;
   switchTab: (tab: "radar" | "thermometer") => void;
@@ -105,7 +105,7 @@ export interface SidebarCallbacks {
   setShowRemoved: (v: boolean) => void;
 }
 
-export const callbacks: SidebarCallbacks = {
+export const questionsCallbacks: QuestionsCallbacks = {
   submitRadar: () => {},
   submitThermo: () => {},
   switchTab: () => {},

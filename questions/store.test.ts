@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { callbacks, store } from "./store";
+import { questionsCallbacks, questionsStore } from "./store";
 
-describe("store", () => {
+describe("questionsStore", () => {
   beforeEach(() => {
     // Reset to initial state before each test
-    store.update({
+    questionsStore.update({
       panelOpen: false,
       activeTab: "radar",
       radarCenter: null,
@@ -21,14 +21,14 @@ describe("store", () => {
   });
 
   it("returns the current state via get()", () => {
-    const state = store.get();
+    const state = questionsStore.get();
     expect(state.panelOpen).toBe(false);
     expect(state.activeTab).toBe("radar");
   });
 
   it("merges partial updates into state", () => {
-    store.update({ panelOpen: true, radarDistance: 10 });
-    const state = store.get();
+    questionsStore.update({ panelOpen: true, radarDistance: 10 });
+    const state = questionsStore.get();
     expect(state.panelOpen).toBe(true);
     expect(state.radarDistance).toBe(10);
     // Unchanged fields are preserved
@@ -37,34 +37,34 @@ describe("store", () => {
 
   it("notifies subscribers on update", () => {
     let callCount = 0;
-    const unsubscribe = store.subscribe(() => {
+    const unsubscribe = questionsStore.subscribe(() => {
       callCount++;
     });
 
-    store.update({ panelOpen: true });
+    questionsStore.update({ panelOpen: true });
     expect(callCount).toBe(1);
 
-    store.update({ radarDistance: 3 });
+    questionsStore.update({ radarDistance: 3 });
     expect(callCount).toBe(2);
 
     unsubscribe();
 
-    store.update({ panelOpen: false });
+    questionsStore.update({ panelOpen: false });
     expect(callCount).toBe(2); // no new calls after unsubscribe
   });
 
   it("supports multiple subscribers", () => {
     let countA = 0;
     let countB = 0;
-    const unsubA = store.subscribe(() => countA++);
-    const unsubB = store.subscribe(() => countB++);
+    const unsubA = questionsStore.subscribe(() => countA++);
+    const unsubB = questionsStore.subscribe(() => countB++);
 
-    store.update({ panelOpen: true });
+    questionsStore.update({ panelOpen: true });
     expect(countA).toBe(1);
     expect(countB).toBe(1);
 
     unsubA();
-    store.update({ panelOpen: false });
+    questionsStore.update({ panelOpen: false });
     expect(countA).toBe(1);
     expect(countB).toBe(2);
 
@@ -72,28 +72,28 @@ describe("store", () => {
   });
 });
 
-describe("callbacks", () => {
+describe("questionsCallbacks", () => {
   it("all callbacks are no-ops by default", () => {
     // These should not throw
-    expect(() => callbacks.submitRadar("yes")).not.toThrow();
-    expect(() => callbacks.submitThermo("hotter")).not.toThrow();
-    expect(() => callbacks.switchTab("radar")).not.toThrow();
-    expect(() => callbacks.clearRadarMarker()).not.toThrow();
-    expect(() => callbacks.clearThermoMarkers()).not.toThrow();
-    expect(() => callbacks.startRadarPicking()).not.toThrow();
-    expect(() => callbacks.startThermoPicking()).not.toThrow();
-    expect(() => callbacks.setShowRemoved(true)).not.toThrow();
+    expect(() => questionsCallbacks.submitRadar("yes")).not.toThrow();
+    expect(() => questionsCallbacks.submitThermo("hotter")).not.toThrow();
+    expect(() => questionsCallbacks.switchTab("radar")).not.toThrow();
+    expect(() => questionsCallbacks.clearRadarMarker()).not.toThrow();
+    expect(() => questionsCallbacks.clearThermoMarkers()).not.toThrow();
+    expect(() => questionsCallbacks.startRadarPicking()).not.toThrow();
+    expect(() => questionsCallbacks.startThermoPicking()).not.toThrow();
+    expect(() => questionsCallbacks.setShowRemoved(true)).not.toThrow();
   });
 
   it("callbacks can be overridden", () => {
     let captured: string | null = null;
-    callbacks.submitRadar = (answer) => {
+    questionsCallbacks.submitRadar = (answer) => {
       captured = answer;
     };
-    callbacks.submitRadar("no");
+    questionsCallbacks.submitRadar("no");
     expect(captured).toBe("no");
 
     // Reset
-    callbacks.submitRadar = () => {};
+    questionsCallbacks.submitRadar = () => {};
   });
 });

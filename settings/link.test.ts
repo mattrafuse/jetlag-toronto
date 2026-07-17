@@ -9,7 +9,7 @@ import {
   readLocalStorage,
   writeLocalStorage,
   type KeyValueStore,
-} from "./state-link";
+} from "./link";
 
 // ── In-memory KeyValueStore mock ──────────────────────────────
 // Mirrors the Web Storage API surface used by the module so the pure

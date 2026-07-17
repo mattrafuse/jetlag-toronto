@@ -3,11 +3,11 @@ import {
   RadioButtonUnchecked as UncheckedIcon,
 } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
-import { useStore } from "./useStore";
+import { useQuestionsStore } from "./useQuestionsStore";
 
 // ── Station List ───────────────────────────────────────────────
 export const StationList = () => {
-  const s = useStore();
+  const s = useQuestionsStore();
 
   if (s.stations.length === 0) {
     return (

@@ -16,16 +16,16 @@ import { HistoryItem } from "../components/sidebar/HistoryItem";
 import { RadarForm } from "../components/sidebar/RadarForm";
 import { StationList } from "../components/sidebar/StationList";
 import { ThermometerForm } from "../components/sidebar/ThermometerForm";
-import { useStore } from "../components/sidebar/useStore";
-import { callbacks } from "../questions";
+import { useQuestionsStore } from "../components/sidebar/useQuestionsStore";
+import { questionsCallbacks } from "../questions";
 
 // ── Main Sidebar Panel ─────────────────────────────────────────
 export const SidebarPanel = () => {
-  const s = useStore();
+  const s = useQuestionsStore();
   const isSmall = useMediaQuery("(max-width:600px)");
 
   const handleTabChange = (_: React.MouseEvent, newTab: "radar" | "thermometer") => {
-    if (newTab) callbacks.switchTab(newTab);
+    if (newTab) questionsCallbacks.switchTab(newTab);
   };
 
   return (
@@ -121,7 +121,7 @@ export const SidebarPanel = () => {
               <Checkbox
                 size="small"
                 checked={s.showRemoved}
-                onChange={(e) => callbacks.setShowRemoved(e.target.checked)}
+                onChange={(e) => questionsCallbacks.setShowRemoved(e.target.checked)}
               />
             }
             label={

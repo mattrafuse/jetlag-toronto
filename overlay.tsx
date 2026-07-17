@@ -11,7 +11,7 @@ import { ToggleSettingsButton } from "./components/settings/ToggleSettingsButton
 import { TogglePanelButton } from "./components/sidebar/TogglePanelButton";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import { SidebarPanel } from "./panels/SidebarPanel";
-import { settingsStore } from "./settings-store";
+import { settingsStore } from "./settings/store";
 import { createAppTheme } from "./theme";
 
 let root: ReturnType<typeof createRoot> | null = null;

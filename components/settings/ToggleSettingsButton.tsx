@@ -1,7 +1,7 @@
 import { Settings as SettingsIcon } from "@mui/icons-material";
 import { darken, IconButton, lighten, useMediaQuery, useTheme } from "@mui/material";
-import { store as questionStore } from "../../questions";
-import { settingsStore } from "../../settings-store";
+import { questionsStore } from "../../questions";
+import { settingsStore } from "../../settings/store";
 import { useSettingsStore } from "./useSettingsStore";
 
 // ── Toggle Button ──────────────────────────────────────────────
@@ -26,7 +26,7 @@ export const ToggleSettingsButton = () => {
         settingsStore.update({ panelOpen: !s.panelOpen });
 
         if (isSmall) {
-          questionStore.update({ panelOpen: false });
+          questionsStore.update({ panelOpen: false });
         }
       }}
       sx={(theme) => ({

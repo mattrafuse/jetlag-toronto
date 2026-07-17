@@ -1,13 +1,13 @@
 import { HelpOutlined as HelpIcon } from "@mui/icons-material";
 import { darken, IconButton, lighten, useMediaQuery, useTheme } from "@mui/material";
-import { store } from "../../questions";
-import { settingsStore } from "../../settings-store";
-import { useStore } from "./useStore";
+import { questionsStore } from "../../questions";
+import { settingsStore } from "../../settings/store";
+import { useQuestionsStore } from "./useQuestionsStore";
 
 // ── Toggle Button ──────────────────────────────────────────────
 export const TogglePanelButton = () => {
   const theme = useTheme();
-  const s = useStore();
+  const s = useQuestionsStore();
   const isSmall = useMediaQuery("(max-width:600px)");
 
   const bgcolor = s.panelOpen ? theme.palette.primary.main : theme.palette.background.paper;
@@ -23,7 +23,7 @@ export const TogglePanelButton = () => {
   return (
     <IconButton
       onClick={() => {
-        store.update({ panelOpen: !s.panelOpen });
+        questionsStore.update({ panelOpen: !s.panelOpen });
         if (isSmall) {
           settingsStore.update({ panelOpen: false });
         }

@@ -1,8 +1,8 @@
 import type L from "leaflet";
-import { exportBorderGeoJSON, setBorderEditable } from "./layers/border";
-import { stationRegistry } from "./questions";
-import { settingsCallbacks, settingsStore } from "./settings-store";
-import { buildShareUrl } from "./state-link";
+import { exportBorderGeoJSON, setBorderEditable } from "../layers/border";
+import { stationRegistry } from "../questions";
+import { buildShareUrl } from "./link";
+import { settingsCallbacks, settingsStore } from "./store";
 
 interface SettingsConfig {
   map: L.Map;

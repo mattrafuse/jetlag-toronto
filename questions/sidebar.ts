@@ -15,7 +15,7 @@ import { computeRadarExclusion } from "./radar/exclusion";
 import { createRadarController } from "./radar/sidebar";
 import type { AskedRadarQuestion } from "./radar/types";
 import { stationRegistry } from "./station-registry";
-import { callbacks, store } from "./store";
+import { questionsCallbacks, questionsStore } from "./store";
 import { computeThermometerExclusion } from "./thermometer/exclusion";
 import { createThermometerController } from "./thermometer/sidebar";
 import type { AskedThermometerQuestion } from "./thermometer/types";
@@ -53,7 +53,7 @@ const updateExclusionLayer = (): void => {
 
 // ── Station filtering ───────────────────────────────────────────
 const refreshStationStatuses = (): void => {
-  store.update({ stations: stationRegistry.getStationStatuses() });
+  questionsStore.update({ stations: stationRegistry.getStationStatuses() });
 };
 
 const applyStationFilter = (): void => {
@@ -99,12 +99,12 @@ const removeQuestion = (id: string): void => {
 
 // ── History rendering ───────────────────────────────────────────
 const renderHistory = (): void => {
-  store.update({ history: loadHistory() });
+  questionsStore.update({ history: loadHistory() });
 };
 
 // ── Tab switching ───────────────────────────────────────────────
 const switchTab = (tab: "radar" | "thermometer"): void => {
-  store.update({ activeTab: tab });
+  questionsStore.update({ activeTab: tab });
   if (tab === "radar") {
     thermoController?.clearMarkers();
     radarController?.startPicking();
@@ -134,32 +134,32 @@ export const initQuestions = (config: QuestionsConfig): void => {
   // Create per-type controllers, injecting shared dependencies.
   radarController = createRadarController({
     map,
-    store,
+    store: questionsStore,
     nextId,
     onQuestionAsked: onRadarQuestionAsked,
   });
 
   thermoController = createThermometerController({
     map,
-    store,
+    store: questionsStore,
     nextId,
     onQuestionAsked: onThermoQuestionAsked,
   });
 
   // Wire the callback registry used by the React UI.
-  callbacks.submitRadar = (answer) => radarController?.submit(answer);
-  callbacks.submitThermo = (answer) => thermoController?.submit(answer);
-  callbacks.switchTab = switchTab;
-  callbacks.startRadarPicking = () => radarController?.startPicking();
-  callbacks.startThermoPicking = () => thermoController?.startPicking();
-  callbacks.clearRadarMarker = () => radarController?.clearMarker();
-  callbacks.clearThermoMarkers = () => thermoController?.clearMarkers();
-  callbacks.setRadarCenter = (lat, lng) => radarController?.setCenter(lat, lng);
-  callbacks.setThermoStart = (lat, lng) => thermoController?.setStart(lat, lng);
-  callbacks.setThermoEnd = (lat, lng) => thermoController?.setEnd(lat, lng);
-  callbacks.setShowRemoved = (v: boolean) => {
+  questionsCallbacks.submitRadar = (answer) => radarController?.submit(answer);
+  questionsCallbacks.submitThermo = (answer) => thermoController?.submit(answer);
+  questionsCallbacks.switchTab = switchTab;
+  questionsCallbacks.startRadarPicking = () => radarController?.startPicking();
+  questionsCallbacks.startThermoPicking = () => thermoController?.startPicking();
+  questionsCallbacks.clearRadarMarker = () => radarController?.clearMarker();
+  questionsCallbacks.clearThermoMarkers = () => thermoController?.clearMarkers();
+  questionsCallbacks.setRadarCenter = (lat, lng) => radarController?.setCenter(lat, lng);
+  questionsCallbacks.setThermoStart = (lat, lng) => thermoController?.setStart(lat, lng);
+  questionsCallbacks.setThermoEnd = (lat, lng) => thermoController?.setEnd(lat, lng);
+  questionsCallbacks.setShowRemoved = (v: boolean) => {
     showRemovedStations = v;
-    store.update({ showRemoved: v });
+    questionsStore.update({ showRemoved: v });
     saveSettings({ showRemoved: v });
     applyStationFilter();
     refreshStationStatuses();
@@ -175,7 +175,7 @@ export const initQuestions = (config: QuestionsConfig): void => {
   }
 
   showRemovedStations = loadSettings().showRemoved;
-  store.update({ showRemoved: showRemovedStations });
+  questionsStore.update({ showRemoved: showRemovedStations });
 
   updateExclusionLayer();
   applyStationFilter();

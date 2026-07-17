@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import { settingsStore } from "../../settings-store";
+import { settingsStore } from "../../settings/store";
+import { createStoreHook } from "../../store-hook";
 
-// ── Hook to subscribe to the settings store ────────────────────
-export const useSettingsStore = () => {
-  const [, setTick] = React.useState(0);
-  useEffect(() => settingsStore.subscribe(() => setTick((n) => n + 1)), []);
-  return settingsStore.get();
-};
+// ── React hook for the settings store ─────────────────────────
+// Re-renders the calling component whenever the settings store
+// emits a change, returning the current state snapshot.
+export const useSettingsStore = createStoreHook(settingsStore);

@@ -1,7 +1,7 @@
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initOverlay } from "./overlay";
-import { settingsStore } from "./settings-store";
+import { settingsStore } from "./settings/store";
 
 // ── initOverlay ────────────────────────────────────────────────
 // Critical path: the overlay must mount into #app-overlay and

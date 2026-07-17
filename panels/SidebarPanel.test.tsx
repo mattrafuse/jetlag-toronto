@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { callbacks, store } from "../questions";
+import { questionsCallbacks, questionsStore } from "../questions";
 import { SidebarPanel } from "./SidebarPanel";
 
 // ── SidebarPanel ───────────────────────────────────────────────
@@ -8,9 +8,9 @@ import { SidebarPanel } from "./SidebarPanel";
 // list, and forwards tab switches / show-removed to the callbacks.
 describe("SidebarPanel", () => {
   beforeEach(() => {
-    vi.spyOn(callbacks, "switchTab").mockImplementation(() => {});
-    vi.spyOn(callbacks, "setShowRemoved").mockImplementation(() => {});
-    store.update({
+    vi.spyOn(questionsCallbacks, "switchTab").mockImplementation(() => {});
+    vi.spyOn(questionsCallbacks, "setShowRemoved").mockImplementation(() => {});
+    questionsStore.update({
       panelOpen: false,
       activeTab: "radar",
       history: [],
@@ -29,7 +29,7 @@ describe("SidebarPanel", () => {
   });
 
   it("collapses the panel when panelOpen is false", () => {
-    store.update({ panelOpen: false });
+    questionsStore.update({ panelOpen: false });
     const { container } = render(<SidebarPanel />);
     const collapse = container.querySelector(".MuiCollapse-root");
     expect(collapse).not.toBeNull();
@@ -38,7 +38,7 @@ describe("SidebarPanel", () => {
   });
 
   it("expands the panel when panelOpen is true", () => {
-    store.update({ panelOpen: true });
+    questionsStore.update({ panelOpen: true });
     const { container } = render(<SidebarPanel />);
     const collapse = container.querySelector(".MuiCollapse-root");
     expect(collapse).not.toBeNull();
@@ -58,7 +58,7 @@ describe("SidebarPanel", () => {
     act(() => {
       thermoTab.click();
     });
-    expect(callbacks.switchTab).toHaveBeenCalledWith("thermometer");
+    expect(questionsCallbacks.switchTab).toHaveBeenCalledWith("thermometer");
   });
 
   it("shows empty history message when no history", () => {
@@ -67,7 +67,7 @@ describe("SidebarPanel", () => {
   });
 
   it("renders history items in reverse order", () => {
-    store.update({
+    questionsStore.update({
       history: [
         {
           id: "a",
@@ -100,19 +100,19 @@ describe("SidebarPanel", () => {
   });
 
   it("renders station names from the store", () => {
-    store.update({
+    questionsStore.update({
       stations: [{ id: "s1", name: "Union Station", excluded: false }],
     });
     render(<SidebarPanel />);
     expect(screen.getByText("Union Station")).toBeInTheDocument();
   });
 
-  it("forwards show-removed toggle to callbacks.setShowRemoved", () => {
+  it("forwards show-removed toggle to questionsCallbacks.setShowRemoved", () => {
     render(<SidebarPanel />);
     const checkbox = screen.getByLabelText("Show removed stations") as HTMLInputElement;
     act(() => {
       checkbox.click();
     });
-    expect(callbacks.setShowRemoved).toHaveBeenCalledWith(true);
+    expect(questionsCallbacks.setShowRemoved).toHaveBeenCalledWith(true);
   });
 });

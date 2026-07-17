@@ -9,7 +9,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useSettingsStore } from "../components/settings/useSettingsStore";
-import { settingsCallbacks } from "../settings-store";
+import { settingsCallbacks } from "../settings/store";
 
 // ── Settings Panel ─────────────────────────────────────────────
 export const SettingsPanel = () => {

@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { store } from "../../questions";
+import { questionsStore } from "../../questions";
 import { TogglePanelButton } from "./TogglePanelButton";
 
 // ── TogglePanelButton ──────────────────────────────────────────
@@ -13,18 +13,18 @@ describe("TogglePanelButton", () => {
   });
 
   it("toggles panelOpen when clicked", () => {
-    store.update({ panelOpen: false });
+    questionsStore.update({ panelOpen: false });
     render(<TogglePanelButton />);
     const btn = screen.getByLabelText("Toggle questions panel");
 
     act(() => {
       btn.click();
     });
-    expect(store.get().panelOpen).toBe(true);
+    expect(questionsStore.get().panelOpen).toBe(true);
 
     act(() => {
       btn.click();
     });
-    expect(store.get().panelOpen).toBe(false);
+    expect(questionsStore.get().panelOpen).toBe(false);
   });
 });

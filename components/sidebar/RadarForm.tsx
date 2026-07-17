@@ -1,7 +1,7 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { callbacks, radarQuestions, roundCoord, store } from "../../questions";
+import { questionsCallbacks, questionsStore, radarQuestions, roundCoord } from "../../questions";
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
-import { useStore } from "./useStore";
+import { useQuestionsStore } from "./useQuestionsStore";
 import { usedRadarDistances } from "./usedDistances";
 
 // ── Coordinate input helper ────────────────────────────────────
@@ -27,20 +27,20 @@ const CoordField = ({
 
 // ── Radar Form ─────────────────────────────────────────────────
 export const RadarForm = () => {
-  const s = useStore();
+  const s = useQuestionsStore();
   const used = usedRadarDistances(s.history);
 
   const handleDistanceChange = (val: string) => {
     const num = Number(val);
     if (val === "custom") {
-      store.update({ radarUseCustom: true });
+      questionsStore.update({ radarUseCustom: true });
     } else if (!Number.isNaN(num)) {
-      store.update({ radarDistance: num, radarUseCustom: false });
+      questionsStore.update({ radarDistance: num, radarUseCustom: false });
       // If a radar center is already placed, just update the radius preview
       // in place; otherwise restart picking from scratch.
       if (!s.radarCenter) {
-        callbacks.clearRadarMarker();
-        callbacks.startRadarPicking();
+        questionsCallbacks.clearRadarMarker();
+        questionsCallbacks.startRadarPicking();
       }
     }
   };
@@ -48,29 +48,29 @@ export const RadarForm = () => {
   const handleCustomChange = (val: string) => {
     const num = Number(val);
     if (!Number.isNaN(num) && num > 0) {
-      store.update({ radarCustomDistance: num });
+      questionsStore.update({ radarCustomDistance: num });
     }
   };
 
   const handleReset = () => {
-    callbacks.clearRadarMarker();
-    callbacks.startRadarPicking();
+    questionsCallbacks.clearRadarMarker();
+    questionsCallbacks.startRadarPicking();
   };
 
   const handleLatChange = (val: string) => {
-    store.update({ radarLat: val });
+    questionsStore.update({ radarLat: val });
     const lat = Number(val);
     const lng = Number(s.radarLng);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setRadarCenter(lat, lng);
+    questionsCallbacks.setRadarCenter(lat, lng);
   };
 
   const handleLngChange = (val: string) => {
-    store.update({ radarLng: val });
+    questionsStore.update({ radarLng: val });
     const lat = Number(s.radarLat);
     const lng = Number(val);
     if (!val || Number.isNaN(lat) || Number.isNaN(lng)) return;
-    callbacks.setRadarCenter(lat, lng);
+    questionsCallbacks.setRadarCenter(lat, lng);
   };
 
   const statusText = s.radarCenter
@@ -119,8 +119,11 @@ export const RadarForm = () => {
 
       <GoogleMapsUrlField
         onResolved={(lat, lng) => {
-          store.update({ radarLat: String(roundCoord(lat)), radarLng: String(roundCoord(lng)) });
-          callbacks.setRadarCenter(lat, lng);
+          questionsStore.update({
+            radarLat: String(roundCoord(lat)),
+            radarLng: String(roundCoord(lng)),
+          });
+          questionsCallbacks.setRadarCenter(lat, lng);
         }}
       />
 
@@ -143,7 +146,7 @@ export const RadarForm = () => {
             fullWidth
             variant="contained"
             color="success"
-            onClick={() => callbacks.submitRadar("yes")}
+            onClick={() => questionsCallbacks.submitRadar("yes")}
           >
             Yes (in range)
           </Button>
@@ -152,7 +155,7 @@ export const RadarForm = () => {
             fullWidth
             variant="contained"
             color="error"
-            onClick={() => callbacks.submitRadar("no")}
+            onClick={() => questionsCallbacks.submitRadar("no")}
           >
             No (out of range)
           </Button>
