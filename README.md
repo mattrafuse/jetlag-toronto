@@ -151,6 +151,31 @@ docker build -f Dockerfile.server -t jetlag-server .
 Then adjust the `image:` lines in `docker-compose.yml` (or add
 `build:` contexts) to use your local tags.
 
+## Pre-commit hooks
+
+The repo uses [pre-commit](https://pre-commit.com) to lint and format staged
+files before each commit. The configuration lives in `.pre-commit-config.yaml`
+and runs a single local hook (`oxlint-oxfmt`) that executes
+`scripts/pre-commit.sh`. That script runs `oxlint` and `oxfmt --check` over the
+project via pnpm.
+
+Install the hooks once (requires pre-commit to be installed, e.g. `pip install
+pre-commit` or `brew install pre-commit`):
+
+```bash
+pre-commit install
+```
+
+After that, every `git commit` triggers the hook automatically. To run it
+manually on all files:
+
+```bash
+pre-commit run --all-files
+```
+
+If `oxfmt --check` fails because files are unformatted, run `pnpm exec oxfmt`
+to reformat them, then re-stage and commit.
+
 ## Project structure
 
 ```

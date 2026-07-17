@@ -6,4 +6,5 @@ repos:
         entry: ./scripts/pre-commit.sh
         language: script
         types: [ts, tsx, json]
+        files: \.(json|ts|tsx|md)$
         pass_filenames: false
