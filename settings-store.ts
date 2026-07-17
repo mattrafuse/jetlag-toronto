@@ -59,6 +59,7 @@ export interface SettingsCallbacks {
   toggleStationLabels: (checked: boolean) => void;
   toggleBorderEditable: (checked: boolean) => void;
   exportBorder: () => void;
+  exportStateLink: () => void;
 }
 
 export const settingsCallbacks: SettingsCallbacks = {
@@ -67,4 +68,5 @@ export const settingsCallbacks: SettingsCallbacks = {
   toggleStationLabels: () => {},
   toggleBorderEditable: () => {},
   exportBorder: () => {},
+  exportStateLink: () => {},
 };

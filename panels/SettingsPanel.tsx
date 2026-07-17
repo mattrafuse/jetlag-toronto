@@ -88,6 +88,15 @@ export const SettingsPanel = () => {
         />
         <div style={{ flex: 1 }} />
 
+        <Button
+          size="small"
+          variant="outlined"
+          sx={{ mt: 0.5 }}
+          onClick={() => settingsCallbacks.exportStateLink()}
+        >
+          Copy Share Link
+        </Button>
+
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>

@@ -9,6 +9,12 @@ import { initMapView } from "./map-view";
 import { initOverlay } from "./overlay";
 import { initQuestions, stationRegistry } from "./questions";
 import { initSettings } from "./settings";
+import { applyStateFromUrl } from "./state-link";
+
+// Restore a shared game state from the URL (if present) before anything
+// reads from localStorage, so the imported settings/view/questions take
+// effect on load.
+applyStateFromUrl();
 
 const map = L.map("map", { editable: true } as L.MapOptions).setView([43.6532, -79.3832], 12);
 

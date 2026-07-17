@@ -2,6 +2,7 @@ import type L from "leaflet";
 import { exportBorderGeoJSON, setBorderEditable } from "./layers/border";
 import { stationRegistry } from "./questions";
 import { settingsCallbacks, settingsStore } from "./settings-store";
+import { buildShareUrl } from "./state-link";
 
 interface SettingsConfig {
   map: L.Map;
@@ -143,6 +144,16 @@ const exportBorder = (): void => {
   exportBorderGeoJSON();
 };
 
+// ── State link export handler ─────────────────────────────────
+// Build a shareable URL carrying the full game state and copy it to the
+// clipboard so the user can paste it anywhere.
+const exportStateLink = (): void => {
+  const url = buildShareUrl();
+  if (navigator.clipboard?.writeText) {
+    void navigator.clipboard.writeText(url);
+  }
+};
+
 // ── Init ───────────────────────────────────────────────────────
 export const initSettings = (settings: {
   map: L.Map;
@@ -154,6 +165,7 @@ export const initSettings = (settings: {
 }): void => {
   settingsCallbacks.toggleBorderEditable = toggleBorderEditable;
   settingsCallbacks.exportBorder = exportBorder;
+  settingsCallbacks.exportStateLink = exportStateLink;
   config.map = settings.map;
   config.trainLayer = settings.trainLayer ?? null;
   config.subwayLayer = settings.subwayLayer ?? null;
