@@ -1,5 +1,5 @@
 import type L from "leaflet";
-import { exportBorderGeoJSON, setBorderEditable } from "../layers/border";
+import { exportBorderGeoJSON, setBorderEditable } from "layers/border";
 import { stationRegistry } from "../questions";
 import { buildShareUrl } from "./link";
 import { settingsCallbacks, settingsStore } from "./store";

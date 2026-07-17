@@ -1,6 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Chip, IconButton, Typography } from "@mui/material";
-import type { AskedQuestion } from "../../questions";
+import type { AskedQuestion } from "questions";
 
 // ── Helpers ────────────────────────────────────────────────────
 const fmt = (n: number): string => n.toFixed(4);

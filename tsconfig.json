@@ -9,16 +9,16 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "settings/*": ["./settings/*"],
+      "layers/*": ["./layers/*"],
+      "questions": ["./questions/index.ts"],
+      "questions/*": ["./questions/*"],
+      "store-hook": ["./store-hook.ts"],
+      "constants": ["./constants.ts"]
+    }
   },
-  "include": [
-    "main.ts",
-    "vite-env.d.ts",
-    "**/*.d.ts",
-    "layers/**/*.ts",
-    "questions/**/*.ts",
-    "questions/**/*.tsx",
-    "types.ts"
-  ],
+  "include": ["main.ts", "vite-env.d.ts", "**/*.d.ts", "**/*.tsx?", "types.ts"],
   "exclude": ["questions/**/*.test.ts"]
 }

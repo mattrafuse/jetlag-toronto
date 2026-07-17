@@ -1,7 +1,7 @@
 import { MyLocation as MyLocationIcon } from "@mui/icons-material";
 import { darken, IconButton, lighten } from "@mui/material";
 import React from "react";
-import { focusUserLocation, onLocationAvailabilityChange } from "../../layers/location";
+import { focusUserLocation, onLocationAvailabilityChange } from "layers/location";
 
 // ── Locate Button ─────────────────────────────────────────────
 export const LocateButton = () => {

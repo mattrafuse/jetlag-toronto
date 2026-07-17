@@ -1,8 +1,8 @@
 import * as turf from "@turf/turf";
 import L from "leaflet";
 import { EXCLUSION_RADIUS_FRACTION, QUARTER_MILE } from "../constants";
-import { findHub, HUBS, hubStationOptions } from "../layers/hubs";
-import { createStation } from "../layers/station";
+import { findHub, HUBS, hubStationOptions } from "layers/hubs";
+import { createStation } from "layers/station";
 import type { RegisteredStation } from "./types";
 
 // ── Station Registry ───────────────────────────────────────────

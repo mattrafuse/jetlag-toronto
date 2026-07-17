@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { settingsStore } from "../../settings/store";
+import { settingsStore } from "settings/store";
 import { ToggleSettingsButton } from "./ToggleSettingsButton";
 
 // ── ToggleSettingsButton ───────────────────────────────────────

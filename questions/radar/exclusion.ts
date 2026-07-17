@@ -2,7 +2,7 @@
 // Pure functions that compute exclusion polygons from radar answers.
 
 import * as turf from "@turf/turf";
-import { MILES_TO_KM } from "../../constants";
+import { MILES_TO_KM } from "constants";
 import { clipToGameBorder } from "../exclusion";
 import { gameBorder } from "../game-border";
 

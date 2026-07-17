@@ -1,10 +1,6 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import {
-  questionsCallbacks,
-  questionsStore,
-  roundCoord,
-  thermometerQuestions,
-} from "../../questions";
+import * as turf from "@turf/turf";
+import { questionsCallbacks, questionsStore, roundCoord, thermometerQuestions } from "questions";
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useQuestionsStore } from "./useQuestionsStore";
 import { usedThermometerDistances } from "./usedDistances";
@@ -87,6 +83,14 @@ export const ThermometerForm = () => {
       : "Click the map to set your end location"
     : "Click the map to set your start location";
 
+  // Distance between the start and end points (in miles), and whether
+  // it satisfies the minimum travel distance for the chosen thermometer.
+  const travelDistance =
+    s.thermoStart && s.thermoEnd
+      ? turf.distance(s.thermoStart, s.thermoEnd, { units: "miles" })
+      : null;
+  const distanceValid = travelDistance !== null && travelDistance >= s.thermoDistance;
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
       <Select
@@ -109,6 +113,22 @@ export const ThermometerForm = () => {
           {statusText}
         </Typography>
       </Paper>
+
+      {travelDistance !== null && (
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 1,
+            bgcolor: distanceValid ? "action.hover" : "error.light",
+            color: distanceValid ? "text.secondary" : "error.contrastText",
+          }}
+        >
+          <Typography variant="body2">
+            Distance traveled: {travelDistance.toFixed(2)} mi
+            {distanceValid ? "" : ` — must be at least ${s.thermoDistance} mi for this thermometer`}
+          </Typography>
+        </Paper>
+      )}
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Typography variant="caption" color="text.secondary">
@@ -152,7 +172,7 @@ export const ThermometerForm = () => {
           size="small"
           color="error"
           variant="outlined"
-          sx={{ alignSelf: "flex-start", textTransform: "none" }}
+          sx={{ textTransform: "none" }}
           onClick={handleReset}
         >
           Reset locations
@@ -166,6 +186,7 @@ export const ThermometerForm = () => {
             fullWidth
             variant="contained"
             color="success"
+            disabled={!distanceValid}
             onClick={() => questionsCallbacks.submitThermo("hotter")}
           >
             Hotter
@@ -175,6 +196,7 @@ export const ThermometerForm = () => {
             fullWidth
             variant="contained"
             color="error"
+            disabled={!distanceValid}
             onClick={() => questionsCallbacks.submitThermo("colder")}
           >
             Colder

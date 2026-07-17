@@ -2,6 +2,8 @@
 // Reactive store for the settings panel, shared between the
 // React SettingsPanel component and settings.ts logic.
 
+import { createStoreHook } from "../store-hook";
+
 export interface SettingsState {
   panelOpen: boolean;
   trains: boolean;
@@ -70,3 +72,5 @@ export const settingsCallbacks: SettingsCallbacks = {
   exportBorder: () => {},
   exportStateLink: () => {},
 };
+
+export const useSettingsStore = createStoreHook(settingsStore);

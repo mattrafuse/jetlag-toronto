@@ -1,6 +1,6 @@
 import { ShapeLine as PolygonIcon } from "@mui/icons-material";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { questionsCallbacks } from "../../questions";
+import { questionsCallbacks } from "questions";
 import { useQuestionsStore } from "./useQuestionsStore";
 
 // ── Custom Polygon Form ──────────────────────────────────────

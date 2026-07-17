@@ -1,5 +1,5 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { questionsCallbacks, questionsStore, radarQuestions, roundCoord } from "../../questions";
+import { questionsCallbacks, questionsStore, radarQuestions, roundCoord } from "questions";
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useQuestionsStore } from "./useQuestionsStore";
 import { usedRadarDistances } from "./usedDistances";

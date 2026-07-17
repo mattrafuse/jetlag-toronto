@@ -1,7 +1,7 @@
 import { HelpOutlined as HelpIcon } from "@mui/icons-material";
 import { darken, IconButton, lighten, useMediaQuery, useTheme } from "@mui/material";
-import { questionsStore } from "../../questions";
-import { settingsStore } from "../../settings/store";
+import { questionsStore } from "questions";
+import { settingsStore } from "settings/store";
 import { useQuestionsStore } from "./useQuestionsStore";
 
 // ── Toggle Button ──────────────────────────────────────────────

@@ -1,8 +1,7 @@
 import { Settings as SettingsIcon } from "@mui/icons-material";
 import { darken, IconButton, lighten, useMediaQuery, useTheme } from "@mui/material";
-import { questionsStore } from "../../questions";
-import { settingsStore } from "../../settings/store";
-import { useSettingsStore } from "./useSettingsStore";
+import { questionsStore } from "questions";
+import { settingsStore, useSettingsStore } from "settings/store";
 
 // ── Toggle Button ──────────────────────────────────────────────
 export const ToggleSettingsButton = () => {

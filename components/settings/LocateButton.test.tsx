@@ -5,12 +5,12 @@ import { LocateButton } from "./LocateButton";
 // ── LocateButton ───────────────────────────────────────────────
 // Critical path: the button only appears once a user location is
 // available, and clicking it focuses the map on the user.
-vi.mock("../../layers/location", () => ({
+vi.mock("layers/location", () => ({
   focusUserLocation: vi.fn(),
   onLocationAvailabilityChange: vi.fn(),
 }));
 
-import { focusUserLocation, onLocationAvailabilityChange } from "../../layers/location";
+import { focusUserLocation, onLocationAvailabilityChange } from "layers/location";
 
 describe("LocateButton", () => {
   beforeEach(() => {

@@ -9,7 +9,7 @@
 // environment.
 
 import * as turf from "@turf/turf";
-import borderGeoJSONRaw from "../layers/shapes/border.geojson?raw";
+import borderGeoJSONRaw from "layers/shapes/border.geojson?raw";
 
 const borderGeoJSON = JSON.parse(borderGeoJSONRaw) as GeoJSON.Feature<GeoJSON.Polygon>;
 

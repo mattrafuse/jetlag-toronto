@@ -5,10 +5,8 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Checkbox,
   Collapse,
   Divider,
-  FormControlLabel,
   Paper,
   ToggleButton,
   ToggleButtonGroup,
@@ -117,37 +115,7 @@ export const SidebarPanel = () => {
 
         <Divider />
 
-        {/* Station list */}
-        <Box sx={{ pt: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.secondary">
-            Stations
-          </Typography>
-        </Box>
-        <Box
-          sx={isSmall ? { flexGrow: 1, py: 1 } : { flex: 1, overflow: "auto", maxHeight: "300px" }}
-        >
-          <StationList />
-        </Box>
-
-        <Divider />
-
-        {/* Settings */}
-        <Box sx={{ py: 1 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                checked={s.showRemoved}
-                onChange={(e) => questionsCallbacks.setShowRemoved(e.target.checked)}
-              />
-            }
-            label={
-              <Typography variant="caption" color="text.secondary">
-                Show removed stations
-              </Typography>
-            }
-          />
-        </Box>
+        <StationList />
       </Paper>
     </Collapse>
   );

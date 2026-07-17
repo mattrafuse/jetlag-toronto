@@ -8,8 +8,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useSettingsStore } from "../components/settings/useSettingsStore";
-import { settingsCallbacks } from "../settings/store";
+import { settingsCallbacks, useSettingsStore } from "settings/store";
 
 // ── Settings Panel ─────────────────────────────────────────────
 export const SettingsPanel = () => {
