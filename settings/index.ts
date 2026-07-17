@@ -49,7 +49,7 @@ const defaultState: SettingsState = {
   "chk-border": true,
   "chk-location": true,
   "chk-dark": false,
-  "chk-labels": true,
+  "chk-labels": false,
 };
 
 // ── Layer toggle handler ───────────────────────────────────────
