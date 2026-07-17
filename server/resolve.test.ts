@@ -12,8 +12,7 @@ describe("parseCoordinates", () => {
   });
 
   it("extracts lat/lng from a /@ maps-view deep link", () => {
-    const url =
-      "https://www.google.com/maps/@43.6563644,-79.4494082,2050m/data=!3m1!1e3?entry=ttu";
+    const url = "https://www.google.com/maps/@43.6563644,-79.4494082,2050m/data=!3m1!1e3?entry=ttu";
     expect(parseCoordinates(url)).toEqual({ lat: 43.6563644, lng: -79.4494082 });
   });
 
@@ -30,8 +29,7 @@ describe("parseCoordinates", () => {
 
 describe("resolveGoogleMapsUrl (direct URLs, no redirect)", () => {
   it("resolves a /@ maps-view deep link without fetching", async () => {
-    const url =
-      "https://www.google.com/maps/@43.6563644,-79.4494082,2050m/data=!3m1!1e3?entry=ttu";
+    const url = "https://www.google.com/maps/@43.6563644,-79.4494082,2050m/data=!3m1!1e3?entry=ttu";
     const result = await resolveGoogleMapsUrl(url, () => {
       throw new Error("should not fetch for direct URLs");
     });
