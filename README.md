@@ -27,11 +27,11 @@ server that resolves Google Maps short URLs into coordinates.
 
 ## Architecture
 
-| Component | Purpose | Port |
-| --- | --- | --- |
-| `ui` | Built Vite web UI served by `vite preview` | `3000` (internal) |
-| `server` | Express API that resolves Google Maps URLs (`/api/resolve`, `/health`) | `3001` (internal) |
-| `nginx` | Reverse proxy that routes `/api/` and `/health` to the server and everything else to the UI | `8080` (host) |
+| Component | Purpose                                                                                     | Port              |
+| --------- | ------------------------------------------------------------------------------------------- | ----------------- |
+| `ui`      | Built Vite web UI served by `vite preview`                                                  | `3000` (internal) |
+| `server`  | Express API that resolves Google Maps URLs (`/api/resolve`, `/health`)                      | `3001` (internal) |
+| `nginx`   | Reverse proxy that routes `/api/` and `/health` to the server and everything else to the UI | `8080` (host)     |
 
 In local development the Vite dev server proxies `/api` and `/health` directly
 to the Express server (see `vite.config.ts`), so you don't need nginx.
@@ -98,7 +98,7 @@ services:
     image: ghcr.io/mattrafuse/jetlag-ui:latest
     restart: unless-stopped
     expose:
-      - "3000"          # only reachable inside the compose network
+      - "3000" # only reachable inside the compose network
 
   server:
     image: ghcr.io/mattrafuse/jetlag-server:latest
@@ -107,7 +107,7 @@ services:
       - PORT=3001
       - NODE_ENV=production
     expose:
-      - "3001"          # only reachable inside the compose network
+      - "3001" # only reachable inside the compose network
 
   nginx:
     image: nginx:alpine
@@ -116,7 +116,7 @@ services:
       - ui
       - server
     ports:
-      - "8080:80"       # published to the host
+      - "8080:80" # published to the host
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 ```
