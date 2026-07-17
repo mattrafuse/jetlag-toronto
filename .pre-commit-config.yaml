@@ -5,5 +5,5 @@ repos:
         name: oxlint and oxfmt
         entry: ./scripts/pre-commit.sh
         language: script
-        types: [ts, tsx]
+        types: [ts, tsx, json]
         pass_filenames: false
