@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 
 interface GoogleMapsUrlFieldProps {
-  label: string;
+  label?: string;
   onResolved: (lat: number, lng: number) => void;
 }
 
@@ -45,9 +45,11 @@ export const GoogleMapsUrlField = ({ label, onResolved }: GoogleMapsUrlFieldProp
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-      <Typography variant="caption" color="text.secondary">
-        {label}
-      </Typography>
+      {label && (
+        <Typography variant="caption" color="text.secondary">
+          {label}
+        </Typography>
+      )}
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
           size="small"
@@ -56,7 +58,9 @@ export const GoogleMapsUrlField = ({ label, onResolved }: GoogleMapsUrlFieldProp
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleResolve();
+            if (e.key === "Enter") {
+              void handleResolve();
+            }
           }}
         />
         <Button

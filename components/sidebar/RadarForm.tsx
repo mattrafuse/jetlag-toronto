@@ -1,8 +1,8 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
 import { callbacks, radarQuestions, roundCoord, store } from "../../questions";
+import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useStore } from "./useStore";
 import { usedRadarDistances } from "./usedDistances";
-import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -75,17 +75,10 @@ export const RadarForm = () => {
 
   const statusText = s.radarCenter
     ? "Center set. Choose answer:"
-    : "Click the map to set the radar center";
+    : "Click the map to set the radar center, or paste a Google Maps URL.";
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}
-      >
-        Distance
-      </Typography>
       <Select
         size="small"
         fullWidth
@@ -125,7 +118,6 @@ export const RadarForm = () => {
       </Box>
 
       <GoogleMapsUrlField
-        label="Or paste a Google Maps URL to set the center"
         onResolved={(lat, lng) => {
           store.update({ radarLat: String(roundCoord(lat)), radarLng: String(roundCoord(lng)) });
           callbacks.setRadarCenter(lat, lng);

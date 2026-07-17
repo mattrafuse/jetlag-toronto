@@ -35,27 +35,32 @@ export const SidebarPanel = () => {
         sx={[
           (theme) =>
             isSmall
-              ? { maxHeight: "50vh", overflow: "auto !important" }
-              : { height: "100%", transition: theme.transitions.create("right"), width: "400px" },
+              ? { maxHeight: "50vh", overflow: "auto" }
+              : {
+                  height: "100%",
+                  transition: theme.transitions.create("right"),
+                  width: "400px",
+                  overflow: "hidden",
+                },
           {
             borderRadius: 0,
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden",
+
             p: 2,
             marginTop: "0 !important",
           },
         ]}
       >
         {/* Header */}
-        <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+        <Box sx={{ pt: 2, pb: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Ask a Question
           </Typography>
         </Box>
 
         {/* Tab Toggle */}
-        <Box sx={{ px: 2, pb: 1 }}>
+        <Box sx={{ pb: 1 }}>
           <ToggleButtonGroup
             value={s.activeTab}
             exclusive
@@ -75,27 +80,17 @@ export const SidebarPanel = () => {
         </Box>
 
         {/* Form Area */}
-        <Box sx={{ px: 2, pb: 1 }}>
-          {s.activeTab === "radar" ? <RadarForm /> : <ThermometerForm />}
-        </Box>
+        <Box sx={{ pb: 1 }}>{s.activeTab === "radar" ? <RadarForm /> : <ThermometerForm />}</Box>
 
         <Divider />
 
         {/* History */}
-        <Typography
-          variant="subtitle2"
-          sx={{ fontWeight: 600, px: 2, pt: 1 }}
-          color="text.secondary"
-        >
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, pt: 1 }} color="text.secondary">
           Question History
         </Typography>
-        <Box sx={[!isSmall && { flex: 1, overflow: "auto", px: 1.5, py: 1 }]}>
+        <Box sx={[!isSmall && { flex: 1, overflow: "auto", py: 1 }]}>
           {s.history.length === 0 ? (
-            <Typography
-              variant="body2"
-              color="text.disabled"
-              sx={{ fontStyle: "italic", px: 1, py: 1 }}
-            >
+            <Typography variant="body2" color="text.disabled" sx={{ fontStyle: "italic", py: 1 }}>
               No questions asked yet
             </Typography>
           ) : (
@@ -120,7 +115,7 @@ export const SidebarPanel = () => {
         <Divider />
 
         {/* Settings */}
-        <Box sx={{ px: 2, py: 1 }}>
+        <Box sx={{ py: 1 }}>
           <FormControlLabel
             control={
               <Checkbox

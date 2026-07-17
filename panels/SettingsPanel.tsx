@@ -31,12 +31,16 @@ export const SettingsPanel = () => {
           (theme) =>
             isSmall
               ? { maxHeight: "50vh", overflow: "auto" }
-              : { height: "100%", transition: theme.transitions.create("right") },
+              : {
+                  height: "100%",
+                  transition: theme.transitions.create("right"),
+                  overflow: "hidden",
+                },
           {
             borderRadius: 0,
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden",
+
             p: 2,
             marginTop: "0 !important",
           },

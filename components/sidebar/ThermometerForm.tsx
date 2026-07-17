@@ -1,8 +1,8 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
 import { callbacks, roundCoord, store, thermometerQuestions } from "../../questions";
+import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useStore } from "./useStore";
 import { usedThermometerDistances } from "./usedDistances";
-import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -84,13 +84,6 @@ export const ThermometerForm = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}
-      >
-        Travel Distance
-      </Typography>
       <Select
         size="small"
         fullWidth
