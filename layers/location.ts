@@ -24,9 +24,7 @@ let lastLatLng: L.LatLng | null = null;
 let locationAvailable = false;
 
 // Subscribe to location-availability changes. Returns an unsubscribe fn.
-export const onLocationAvailabilityChange = (
-  cb: (available: boolean) => void,
-): (() => void) => {
+export const onLocationAvailabilityChange = (cb: (available: boolean) => void): (() => void) => {
   availabilityCallbacks.push(cb);
   // Immediately notify with the current state.
   cb(locationAvailable);
@@ -129,7 +127,7 @@ export const addUserLocation = (map: L.Map): L.LayerGroup => {
 
   group.addTo(map);
   return group;
-}
+};
 
 // ── Focus the map on the user's location ──────────────────────
 // Pans/zooms to the last known location, or re-queries if unknown.
@@ -142,4 +140,4 @@ export const focusUserLocation = (): void => {
     // No location cached yet — ask the browser again.
     mapRef.locate({ enableHighAccuracy: true, setView: true, maxZoom: 16 });
   }
-}
+};

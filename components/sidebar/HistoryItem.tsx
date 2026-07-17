@@ -7,9 +7,7 @@ const fmt = (n: number): string => n.toFixed(4);
 
 const coordLabel = (lat: number, lng: number): string => `${fmt(lat)}, ${fmt(lng)}`;
 
-const answerColor = (
-  answer: AskedQuestion["answer"],
-): "success" | "error" | "warning" | "info" => {
+const answerColor = (answer: AskedQuestion["answer"]): "success" | "error" | "warning" | "info" => {
   switch (answer) {
     case "yes":
       return "success";
