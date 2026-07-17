@@ -4,25 +4,14 @@
 // creates and composes this controller; it never imports radar code.
 
 import L from "leaflet";
+import type { QuestionsStoreType } from "../store";
 import { roundCoord } from "../store";
 import { thermometerQuestions } from "./data";
 import type { AskedThermometerQuestion } from "./types";
 
 export interface ThermometerControllerDependencies {
   map: L.Map;
-  store: {
-    get: () => { thermoDistance: number };
-    update: (
-      partial: Partial<{
-        thermoStart: [number, number] | null;
-        thermoEnd: [number, number] | null;
-        thermoStartLat: string;
-        thermoStartLng: string;
-        thermoEndLat: string;
-        thermoEndLng: string;
-      }>,
-    ) => void;
-  };
+  store: QuestionsStoreType;
   nextId: () => string;
   onQuestionAsked: (question: AskedThermometerQuestion) => void;
 }

@@ -24,6 +24,8 @@ export type {
 } from "./types";
 
 // Per-type question definitions (used by RadarForm / ThermometerForm)
+export { computePolygonExclusion } from "./polygon/exclusion";
+export type { AskedPolygonQuestion } from "./polygon/types";
 export { radarQuestions } from "./radar/data";
 export type { RadarQuestionDef } from "./radar/types";
 export { thermometerQuestions } from "./thermometer/data";

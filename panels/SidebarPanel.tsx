@@ -1,4 +1,8 @@
-import { Radar as RadarIcon, Thermostat as ThermoIcon } from "@mui/icons-material";
+import {
+  ShapeLine as PolygonIcon,
+  Radar as RadarIcon,
+  Thermostat as ThermoIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Checkbox,
@@ -13,6 +17,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { HistoryItem } from "../components/sidebar/HistoryItem";
+import { PolygonForm } from "../components/sidebar/PolygonForm";
 import { RadarForm } from "../components/sidebar/RadarForm";
 import { StationList } from "../components/sidebar/StationList";
 import { ThermometerForm } from "../components/sidebar/ThermometerForm";
@@ -24,7 +29,7 @@ export const SidebarPanel = () => {
   const s = useQuestionsStore();
   const isSmall = useMediaQuery("(max-width:600px)");
 
-  const handleTabChange = (_: React.MouseEvent, newTab: "radar" | "thermometer") => {
+  const handleTabChange = (_: React.MouseEvent, newTab: "radar" | "thermometer" | "polygon") => {
     if (newTab) questionsCallbacks.switchTab(newTab);
   };
 
@@ -76,11 +81,23 @@ export const SidebarPanel = () => {
               <ThermoIcon fontSize="small" sx={{ mr: 0.5 }} />
               Thermo
             </ToggleButton>
+            <ToggleButton value="polygon">
+              <PolygonIcon fontSize="small" sx={{ mr: 0.5 }} />
+              Polygon
+            </ToggleButton>
           </ToggleButtonGroup>
         </Box>
 
         {/* Form Area */}
-        <Box sx={{ pb: 1 }}>{s.activeTab === "radar" ? <RadarForm /> : <ThermometerForm />}</Box>
+        <Box sx={{ pb: 1 }}>
+          {s.activeTab === "radar" ? (
+            <RadarForm />
+          ) : s.activeTab === "polygon" ? (
+            <PolygonForm />
+          ) : (
+            <ThermometerForm />
+          )}
+        </Box>
 
         <Divider />
 

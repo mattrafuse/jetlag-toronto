@@ -40,6 +40,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const port = Number(process.env.PORT ?? 3001);
   const app = createApp();
   app.listen(port, () => {
+    // oxlint-disable-next-line no-console
     console.log(`Listening on http://localhost:${port}`);
   });
 }

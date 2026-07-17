@@ -20,10 +20,22 @@ const answerColor = (answer: AskedQuestion["answer"]): "success" | "error" | "wa
   }
 };
 
+const typeLabel = (type: AskedQuestion["type"]): string => {
+  switch (type) {
+    case "radar":
+      return "Radar";
+    case "thermometer":
+      return "Thermometer";
+    case "polygon":
+      return "Polygon";
+  }
+};
+
 // ── History Item ───────────────────────────────────────────────
 export const HistoryItem = ({ question }: { question: AskedQuestion }) => {
   const isRadar = question.type === "radar";
-  const title = `${isRadar ? "Radar" : "Thermometer"} ${question.label}`;
+  const isPolygon = question.type === "polygon";
+  const title = `${typeLabel(question.type)} ${question.label}`;
   const answerText = question.answer.toUpperCase();
 
   const handleDelete = () => {
@@ -72,6 +84,10 @@ export const HistoryItem = ({ question }: { question: AskedQuestion }) => {
         {isRadar ? (
           <Typography variant="caption" color="text.secondary" component="div">
             <strong>Center:</strong> {coordLabel(question.center[0], question.center[1])}
+          </Typography>
+        ) : isPolygon ? (
+          <Typography variant="caption" color="text.secondary" component="div">
+            <strong>Vertices:</strong> {question.rings[0].length}
           </Typography>
         ) : (
           <>

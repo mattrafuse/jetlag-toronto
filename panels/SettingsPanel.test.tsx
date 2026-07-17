@@ -70,13 +70,13 @@ describe("SettingsPanel", () => {
   });
 
   it("forwards station labels toggle", () => {
-    // Default stationLabels=true, so a click toggles it to false.
+    // Default stationLabels=false, so a click toggles it to true.
     render(<SettingsPanel />);
     const labels = screen.getByLabelText("Show Station Labels") as HTMLInputElement;
     act(() => {
       labels.click();
     });
-    expect(settingsCallbacks.toggleStationLabels).toHaveBeenCalledWith(false);
+    expect(settingsCallbacks.toggleStationLabels).toHaveBeenCalledWith(true);
   });
 
   it("forwards border editable toggle", () => {

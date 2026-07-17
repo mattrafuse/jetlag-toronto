@@ -11,6 +11,9 @@
 import L from "leaflet";
 import { unionExclusionZones } from "./exclusion";
 import { loadHistory, loadSettings, nextId, saveHistory, saveSettings } from "./history";
+import { computePolygonExclusion } from "./polygon/exclusion";
+import { createPolygonController } from "./polygon/sidebar";
+import type { AskedPolygonQuestion } from "./polygon/types";
 import { computeRadarExclusion } from "./radar/exclusion";
 import { createRadarController } from "./radar/sidebar";
 import type { AskedRadarQuestion } from "./radar/types";
@@ -36,6 +39,7 @@ let showRemovedStations = false;
 // lifetime of the page.
 let radarController: ReturnType<typeof createRadarController> | null = null;
 let thermoController: ReturnType<typeof createThermometerController> | null = null;
+let polygonController: ReturnType<typeof createPolygonController> | null = null;
 
 // ── Exclusion layer ─────────────────────────────────────────────
 const updateExclusionLayer = (): void => {
@@ -78,6 +82,9 @@ const computeExclusionPolygon = (question: AskedQuestion): GeoJSON.Feature<GeoJS
   if (question.type === "radar") {
     return computeRadarExclusion(question.center, question.distance, question.answer);
   }
+  if (question.type === "polygon") {
+    return computePolygonExclusion(question.rings, question.answer);
+  }
   return computeThermometerExclusion(question.start, question.end, question.answer);
 };
 
@@ -103,11 +110,14 @@ const renderHistory = (): void => {
 };
 
 // ── Tab switching ───────────────────────────────────────────────
-const switchTab = (tab: "radar" | "thermometer"): void => {
+const switchTab = (tab: "radar" | "thermometer" | "polygon"): void => {
   questionsStore.update({ activeTab: tab });
   if (tab === "radar") {
     thermoController?.clearMarkers();
     radarController?.startPicking();
+  } else if (tab === "polygon") {
+    radarController?.clearMarker();
+    thermoController?.clearMarkers();
   } else {
     radarController?.clearMarker();
     thermoController?.startPicking();
@@ -122,6 +132,12 @@ const onRadarQuestionAsked = (question: AskedRadarQuestion): void => {
 };
 
 const onThermoQuestionAsked = (question: AskedThermometerQuestion): void => {
+  saveHistory([...loadHistory(), question]);
+  processQuestion(question);
+  renderHistory();
+};
+
+const onPolygonQuestionAsked = (question: AskedPolygonQuestion): void => {
   saveHistory([...loadHistory(), question]);
   processQuestion(question);
   renderHistory();
@@ -146,13 +162,24 @@ export const initQuestions = (config: QuestionsConfig): void => {
     onQuestionAsked: onThermoQuestionAsked,
   });
 
+  polygonController = createPolygonController({
+    map,
+    store: questionsStore,
+    nextId,
+    onQuestionAsked: onPolygonQuestionAsked,
+  });
+
   // Wire the callback registry used by the React UI.
   questionsCallbacks.submitRadar = (answer) => radarController?.submit(answer);
   questionsCallbacks.submitThermo = (answer) => thermoController?.submit(answer);
+  questionsCallbacks.submitPolygon = (answer) => polygonController?.submit(answer);
+  questionsCallbacks.finishPolygonDrawing = () => polygonController?.finishDrawing();
   questionsCallbacks.switchTab = switchTab;
   questionsCallbacks.startRadarPicking = () => radarController?.startPicking();
   questionsCallbacks.startThermoPicking = () => thermoController?.startPicking();
   questionsCallbacks.clearRadarMarker = () => radarController?.clearMarker();
+  questionsCallbacks.clearPolygon = () => polygonController?.clearPolygon();
+  questionsCallbacks.startPolygonPicking = () => polygonController?.startPicking();
   questionsCallbacks.clearThermoMarkers = () => thermoController?.clearMarkers();
   questionsCallbacks.setRadarCenter = (lat, lng) => radarController?.setCenter(lat, lng);
   questionsCallbacks.setThermoStart = (lat, lng) => thermoController?.setStart(lat, lng);

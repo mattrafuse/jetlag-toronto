@@ -4,7 +4,7 @@
 // composes this controller; it never imports thermometer code.
 
 import L from "leaflet";
-import { roundCoord } from "../store";
+import { type QuestionsStoreType, roundCoord } from "../store";
 import { radarQuestions } from "./data";
 import type { AskedRadarQuestion } from "./types";
 
@@ -12,23 +12,7 @@ const MILES_TO_METERS = 1609.344;
 
 export interface RadarControllerDependencies {
   map: L.Map;
-  store: {
-    get: () => {
-      panelOpen: boolean;
-      activeTab: "radar" | "thermometer";
-      radarDistance: number;
-      radarCustomDistance: number;
-      radarUseCustom: boolean;
-    };
-    update: (
-      partial: Partial<{
-        radarCenter: [number, number] | null;
-        radarLat: string;
-        radarLng: string;
-      }>,
-    ) => void;
-    subscribe: (fn: () => void) => () => void;
-  };
+  store: QuestionsStoreType;
   nextId: () => string;
   onQuestionAsked: (question: AskedRadarQuestion) => void;
 }

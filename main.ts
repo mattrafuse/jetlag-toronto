@@ -16,7 +16,13 @@ import { applyStateFromUrl } from "./settings/link";
 // effect on load.
 applyStateFromUrl();
 
-const map = L.map("map", { editable: true } as L.MapOptions).setView([43.6532, -79.3832], 12);
+const map = L.map("map", {
+  editable: true,
+  // Allow finer, more granular zoom steps when scrolling the mouse wheel.
+  zoomSnap: 0.25,
+  zoomDelta: 0.25,
+  wheelPxPerZoomLevel: 120,
+} as L.MapOptions).setView([43.6532, -79.3832], 12);
 
 // Restore the user's last-viewed position (center + zoom) from localStorage.
 initMapView(map);

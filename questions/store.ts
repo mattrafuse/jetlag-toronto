@@ -12,7 +12,11 @@ export const roundCoord = (v: number): number => Math.round(v * 1e6) / 1e6;
 
 export interface QuestionsState {
   panelOpen: boolean;
-  activeTab: "radar" | "thermometer";
+  activeTab: "radar" | "thermometer" | "polygon";
+
+  // Custom polygon
+  polygonDrawing: boolean; // true while the user is actively placing vertices
+  polygonDrawn: boolean; // true once the shape has been committed (double-click or finish button)
 
   // Radar
   radarCenter: [number, number] | null;
@@ -44,6 +48,8 @@ export interface QuestionsState {
 const initialState: QuestionsState = {
   panelOpen: false,
   activeTab: "radar",
+  polygonDrawing: false,
+  polygonDrawn: false,
 
   radarCenter: null,
   radarLat: "",
@@ -88,17 +94,23 @@ export const questionsStore = {
   },
 };
 
+export type QuestionsStoreType = typeof questionsStore;
+
 // ── Callback registry ──────────────────────────────────────────
 // sidebar.ts sets these; React components call them.
 
 export interface QuestionsCallbacks {
   submitRadar: (answer: "yes" | "no") => void;
   submitThermo: (answer: "hotter" | "colder") => void;
-  switchTab: (tab: "radar" | "thermometer") => void;
+  submitPolygon: (answer: "yes" | "no") => void;
+  finishPolygonDrawing: () => void;
+  switchTab: (tab: "radar" | "thermometer" | "polygon") => void;
   clearRadarMarker: () => void;
   clearThermoMarkers: () => void;
+  clearPolygon: () => void;
   startRadarPicking: () => void;
   startThermoPicking: () => void;
+  startPolygonPicking: () => void;
   setRadarCenter: (lat: number, lng: number) => void;
   setThermoStart: (lat: number, lng: number) => void;
   setThermoEnd: (lat: number, lng: number) => void;
@@ -108,11 +120,15 @@ export interface QuestionsCallbacks {
 export const questionsCallbacks: QuestionsCallbacks = {
   submitRadar: () => {},
   submitThermo: () => {},
+  submitPolygon: () => {},
+  finishPolygonDrawing: () => {},
   switchTab: () => {},
   clearRadarMarker: () => {},
   clearThermoMarkers: () => {},
+  clearPolygon: () => {},
   startRadarPicking: () => {},
   startThermoPicking: () => {},
+  startPolygonPicking: () => {},
   setRadarCenter: () => {},
   setThermoStart: () => {},
   setThermoEnd: () => {},

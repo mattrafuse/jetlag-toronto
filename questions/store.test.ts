@@ -1,5 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { questionsCallbacks, questionsStore } from "./store";
+import { questionsCallbacks, questionsStore, roundCoord } from "./store";
+
+describe("roundCoord", () => {
+  it("rounds to 6 decimal places", () => {
+    expect(roundCoord(43.123456789)).toBe(43.123457);
+    expect(roundCoord(0)).toBe(0);
+    expect(roundCoord(-79.987654321)).toBe(-79.987654);
+  });
+});
 
 describe("questionsStore", () => {
   beforeEach(() => {

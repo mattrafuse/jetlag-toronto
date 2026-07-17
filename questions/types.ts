@@ -3,23 +3,19 @@
 // import everything from a single location, and defines the few truly
 // shared types used across radar and thermometer modules.
 
+export type { AskedPolygonQuestion } from "./polygon/types";
 export type { AskedRadarQuestion, RadarQuestionDef } from "./radar/types";
 export type { AskedThermometerQuestion, ThermometerQuestionDef } from "./thermometer/types";
 
 // ── Question Categories ────────────────────────────────────────
-export type QuestionCategory =
-  | "radar"
-  | "thermometer"
-  | "measuring"
-  | "matching"
-  | "photo"
-  | "tentacles";
+export type QuestionCategory = "radar" | "thermometer" | "polygon";
 
 // ── Discriminated union of all asked questions ─────────────────
+import type { AskedPolygonQuestion } from "./polygon/types";
 import type { AskedRadarQuestion } from "./radar/types";
 import type { AskedThermometerQuestion } from "./thermometer/types";
 
-export type AskedQuestion = AskedRadarQuestion | AskedThermometerQuestion;
+export type AskedQuestion = AskedRadarQuestion | AskedThermometerQuestion | AskedPolygonQuestion;
 
 // ── Exclusion Zones ────────────────────────────────────────────
 export interface ExclusionZone {

@@ -8,6 +8,7 @@ export const usedRadarDistances = (history: AskedQuestion[]): Set<number> => {
     history.filter((q): q is AskedRadarQuestion => q.type === "radar").map((q) => q.distance),
   );
 };
+
 export const usedThermometerDistances = (history: AskedQuestion[]): Set<number> => {
   return new Set(
     history

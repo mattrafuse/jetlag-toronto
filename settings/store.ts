@@ -20,7 +20,7 @@ const initialState: SettingsState = {
   border: true,
   location: true,
   darkMode: false,
-  stationLabels: true,
+  stationLabels: false,
   borderEditable: false,
 };
 
