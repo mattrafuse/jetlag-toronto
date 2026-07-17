@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   Paper,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useSettingsStore } from "../components/settings/useSettingsStore";
 import { settingsCallbacks } from "../settings-store";
@@ -13,6 +14,7 @@ import { settingsCallbacks } from "../settings-store";
 // ── Settings Panel ─────────────────────────────────────────────
 export const SettingsPanel = () => {
   const s = useSettingsStore();
+  const isSmall = useMediaQuery("(max-width:600px)");
 
   const layers = [
     { id: "chk-trains" as const, label: "GO Trains", key: "trains" as const },
@@ -22,19 +24,23 @@ export const SettingsPanel = () => {
   ];
 
   return (
-    <Collapse in={s.panelOpen} orientation="horizontal">
+    <Collapse in={s.panelOpen} orientation={isSmall ? "vertical" : "horizontal"}>
       <Paper
         elevation={8}
-        sx={{
-          height: "100%",
-          borderRadius: 0,
-          transition: "right 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          p: 2,
-          marginTop: "0 !important",
-        }}
+        sx={[
+          (theme) =>
+            isSmall
+              ? { maxHeight: "50vh", overflow: "auto" }
+              : { height: "100%", transition: theme.transitions.create("right") },
+          {
+            borderRadius: 0,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            p: 2,
+            marginTop: "0 !important",
+          },
+        ]}
       >
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
           Map Settings

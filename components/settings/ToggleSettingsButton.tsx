@@ -1,5 +1,6 @@
 import { Settings as SettingsIcon } from "@mui/icons-material";
-import { darken, IconButton, lighten, useTheme } from "@mui/material";
+import { darken, IconButton, lighten, useMediaQuery, useTheme } from "@mui/material";
+import { store as questionStore } from "../../questions";
 import { settingsStore } from "../../settings-store";
 import { useSettingsStore } from "./useSettingsStore";
 
@@ -7,6 +8,7 @@ import { useSettingsStore } from "./useSettingsStore";
 export const ToggleSettingsButton = () => {
   const theme = useTheme();
   const s = useSettingsStore();
+  const isSmall = useMediaQuery("(max-width:600px)");
 
   const bgcolor = s.panelOpen ? theme.palette.primary.main : theme.palette.background.paper;
   const hoverColor =
@@ -20,7 +22,13 @@ export const ToggleSettingsButton = () => {
 
   return (
     <IconButton
-      onClick={() => settingsStore.update({ panelOpen: !s.panelOpen })}
+      onClick={() => {
+        settingsStore.update({ panelOpen: !s.panelOpen });
+
+        if (isSmall) {
+          questionStore.update({ panelOpen: false });
+        }
+      }}
       sx={(theme) => ({
         bgcolor: bgcolor,
         boxShadow: 2,

@@ -77,6 +77,12 @@ export const HUBS: HubDefinition[] = [
     color: HUB_COLOR,
     match: (name) => name.includes("Downsview Park"),
   },
+  {
+    id: "Sheppard-Yonge",
+    label: "Sheppard-Yonge",
+    color: HUB_COLOR,
+    match: (name) => name.includes("Sheppard-Yonge"),
+  },
 ];
 
 export const findHub = (name: string): HubDefinition | undefined =>

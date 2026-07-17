@@ -9,6 +9,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React from "react";
 import { HistoryItem } from "../components/sidebar/HistoryItem";
@@ -21,25 +22,30 @@ import { callbacks } from "../questions";
 // ── Main Sidebar Panel ─────────────────────────────────────────
 export const SidebarPanel = () => {
   const s = useStore();
+  const isSmall = useMediaQuery("(max-width:600px)");
 
   const handleTabChange = (_: React.MouseEvent, newTab: "radar" | "thermometer") => {
     if (newTab) callbacks.switchTab(newTab);
   };
 
   return (
-    <Collapse in={s.panelOpen} orientation="horizontal">
+    <Collapse in={s.panelOpen} orientation={isSmall ? "vertical" : "horizontal"}>
       <Paper
         elevation={8}
-        sx={{
-          height: "100%",
-          borderRadius: 0,
-          transition: "right 0.3s ease",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          marginTop: "0 !important",
-          width: "400px",
-        }}
+        sx={[
+          (theme) =>
+            isSmall
+              ? { maxHeight: "50vh", overflow: "auto !important" }
+              : { height: "100%", transition: theme.transitions.create("right"), width: "400px" },
+          {
+            borderRadius: 0,
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            p: 2,
+            marginTop: "0 !important",
+          },
+        ]}
       >
         {/* Header */}
         <Box sx={{ px: 2, pt: 2, pb: 1 }}>
@@ -76,12 +82,14 @@ export const SidebarPanel = () => {
         <Divider />
 
         {/* History */}
-        <Box sx={{ px: 2, pt: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.secondary">
-            Question History
-          </Typography>
-        </Box>
-        <Box sx={{ flex: 1, overflow: "auto", px: 1.5, py: 1 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{ fontWeight: 600, px: 2, pt: 1 }}
+          color="text.secondary"
+        >
+          Question History
+        </Typography>
+        <Box sx={[!isSmall && { flex: 1, overflow: "auto", px: 1.5, py: 1 }]}>
           {s.history.length === 0 ? (
             <Typography
               variant="body2"
@@ -98,12 +106,14 @@ export const SidebarPanel = () => {
         <Divider />
 
         {/* Station list */}
-        <Box sx={{ px: 2, pt: 1 }}>
+        <Box sx={{ pt: 1 }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.secondary">
             Stations
           </Typography>
         </Box>
-        <Box sx={{ flex: 1, overflow: "auto", maxHeight: 400 }}>
+        <Box
+          sx={isSmall ? { flexGrow: 1, py: 1 } : { flex: 1, overflow: "auto", maxHeight: "300px" }}
+        >
           <StationList />
         </Box>
 

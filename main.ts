@@ -21,8 +21,11 @@ const map = L.map("map", { editable: true } as L.MapOptions).setView([43.6532, -
 // Restore the user's last-viewed position (center + zoom) from localStorage.
 initMapView(map);
 
-const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png", {
   maxZoom: 19,
+  // Request retina (@2x) tiles so the map prints at a much higher resolution
+  // than the screen-rendered tiles.
+  detectRetina: true,
   attribution:
     '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
 }).addTo(map);

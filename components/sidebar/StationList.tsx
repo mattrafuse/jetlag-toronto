@@ -11,14 +11,14 @@ export const StationList = () => {
 
   if (s.stations.length === 0) {
     return (
-      <Typography variant="body2" color="text.disabled" sx={{ fontStyle: "italic", px: 1, py: 1 }}>
+      <Typography variant="body2" color="text.disabled" sx={{ fontStyle: "italic", py: 1 }}>
         No stations loaded
       </Typography>
     );
   }
 
   return (
-    <Box sx={{ px: 1, py: 0.5 }}>
+    <Box sx={{ py: 0.5 }}>
       {s.stations.map((st) => (
         <Box
           key={st.id}

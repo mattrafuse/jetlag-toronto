@@ -79,6 +79,16 @@ export const addSubwayLayers = (map: L.Map, onReady?: () => void): L.LayerGroup 
     isModern: true,
     cacheLayers: true,
     pointToLayer: (feature, latlng) => {
+      if (
+        turf.booleanPointInPolygon(feature.geometry, borderFeature) ||
+        ["MIDLAND", "ELLESMERE", "LAWRENCE EAST"].includes(feature.properties?.PT_NAME)
+      ) {
+        return L.circleMarker(latlng, {
+          opacity: 0,
+          fillOpacity: 0,
+        });
+      }
+
       let closest: [number, Feature<LineString>] | null = null;
       routes.eachFeature((subwayLine) => {
         const currentDistance = turf.nearestPointOnLine(subwayLine.feature, feature).properties
@@ -88,13 +98,6 @@ export const addSubwayLayers = (map: L.Map, onReady?: () => void): L.LayerGroup 
           closest = [currentDistance, subwayLine.feature as Feature<LineString>];
         }
       });
-
-      if (turf.booleanPointInPolygon(feature.geometry, borderFeature)) {
-        return L.circleMarker(latlng, {
-          opacity: 0,
-          fillOpacity: 0,
-        });
-      }
 
       const ll = latlng as L.LatLng;
       const colour = `#${closest ? (closest[1] as Feature<LineString>).properties?.ROUTE_COLOR : "666"}`;
