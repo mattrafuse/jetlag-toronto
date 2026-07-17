@@ -1,7 +1,8 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { callbacks, store, thermometerQuestions } from "../../questions";
+import { callbacks, roundCoord, store, thermometerQuestions } from "../../questions";
 import { useStore } from "./useStore";
 import { usedThermometerDistances } from "./usedDistances";
+import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -119,6 +120,16 @@ export const ThermometerForm = () => {
           <CoordField label="Lat" value={s.thermoStartLat} onChange={handleStartLatChange} />
           <CoordField label="Lng" value={s.thermoStartLng} onChange={handleStartLngChange} />
         </Box>
+        <GoogleMapsUrlField
+          label="Or paste a Google Maps URL to set the start"
+          onResolved={(lat, lng) => {
+            store.update({
+              thermoStartLat: String(roundCoord(lat)),
+              thermoStartLng: String(roundCoord(lng)),
+            });
+            callbacks.setThermoStart(lat, lng);
+          }}
+        />
         <Typography variant="caption" color="text.secondary">
           End
         </Typography>
@@ -126,6 +137,16 @@ export const ThermometerForm = () => {
           <CoordField label="Lat" value={s.thermoEndLat} onChange={handleEndLatChange} />
           <CoordField label="Lng" value={s.thermoEndLng} onChange={handleEndLngChange} />
         </Box>
+        <GoogleMapsUrlField
+          label="Or paste a Google Maps URL to set the end"
+          onResolved={(lat, lng) => {
+            store.update({
+              thermoEndLat: String(roundCoord(lat)),
+              thermoEndLng: String(roundCoord(lng)),
+            });
+            callbacks.setThermoEnd(lat, lng);
+          }}
+        />
       </Box>
 
       {(s.thermoStart || s.thermoEnd) && (

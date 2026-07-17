@@ -1,7 +1,7 @@
 import express from "express";
-import { resolveGoogleMapsUrl } from "./resolve.js";
+import { resolveGoogleMapsUrl } from "./resolve.ts";
 
-export function createApp() {
+export const createApp = () => {
   const app = express();
   app.use(express.json());
 
@@ -33,13 +33,13 @@ export function createApp() {
   });
 
   return app;
-}
+};
 
 // Only start listening when run directly (not when imported by tests).
 if (import.meta.url === `file://${process.argv[1]}`) {
   const port = Number(process.env.PORT ?? 3001);
   const app = createApp();
   app.listen(port, () => {
-    console.log(`jetlag-ui resolve server listening on http://localhost:${port}`);
+    console.log(`Listening on http://localhost:${port}`);
   });
 }

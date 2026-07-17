@@ -9,6 +9,9 @@
  */
 
 const COORD_PAIR = /(-?\d+(?:\.\d+)?)\s*,\s*\+?(-?\d+(?:\.\d+)?)/;
+// /@lat,lng,zoom — the "maps view" deep link, e.g.
+//   https://www.google.com/maps/@43.6563644,-79.4494082,2050m/data=!3m1!1e3
+const AT_COORD_PAIR = /@(-?\d+(?:\.\d+)?)\s*,\s*\+?(-?\d+(?:\.\d+)?)/;
 
 export interface ResolvedLocation {
   url: string;
@@ -17,11 +20,23 @@ export interface ResolvedLocation {
 }
 
 /**
- * Extracts a `lat,lng` pair from a resolved Google Maps URL.
- * Returns `null` when no coordinates can be found.
+ * Extracts a `lat,lng` pair from a Google Maps URL.
+ * Handles both the `/search/lat,lng` form and the `/@lat,lng,zoom` "maps view"
+ * deep link. Returns `null` when no coordinates can be found.
  */
-export function parseCoordinates(resolvedUrl: string): { lat: number; lng: number } | null {
-  const match = resolvedUrl.match(COORD_PAIR);
+export const parseCoordinates = (url: string): { lat: number; lng: number } | null => {
+  // The /@ form is more specific (coordinates sit right after the @), so try it
+  // first to avoid accidentally matching other numbers elsewhere in the URL.
+  const atMatch = url.match(AT_COORD_PAIR);
+  if (atMatch) {
+    const lat = Number.parseFloat(atMatch[1]);
+    const lng = Number.parseFloat(atMatch[2]);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return { lat, lng };
+    }
+  }
+
+  const match = url.match(COORD_PAIR);
   if (!match) {
     return null;
   }
@@ -31,16 +46,30 @@ export function parseCoordinates(resolvedUrl: string): { lat: number; lng: numbe
     return null;
   }
   return { lat, lng };
-}
+};
 
 /**
- * Follows the redirect chain for `shortUrl` and returns the resolved location.
- * Throws if the URL cannot be fetched or no coordinates are present.
+ * Resolves a Google Maps URL to its lat/lng.
+ *
+ * Some Google Maps URLs already embed the coordinates and don't require
+ * following a redirect — for example the `/@lat,lng,zoom` "maps view" deep link
+ * or a `/search/lat,lng` query. For those we parse the URL directly without
+ * hitting the network. Otherwise (e.g. `maps.app.goo.gl` short links) we follow
+ * the redirect chain and extract the coordinates from the final URL.
+ *
+ * Throws if no coordinates can be found.
  */
-export async function resolveGoogleMapsUrl(
+export const resolveGoogleMapsUrl = async (
   shortUrl: string,
   fetchImpl: typeof fetch = fetch,
-): Promise<ResolvedLocation> {
+): Promise<ResolvedLocation> => {
+  // Fast path: coordinates are already in the URL — no network needed.
+  const direct = parseCoordinates(shortUrl);
+  if (direct) {
+    return { url: shortUrl, lat: direct.lat, lng: direct.lng };
+  }
+
+  // Slow path: follow redirects (e.g. maps.app.goo.gl short links).
   const response = await fetchImpl(shortUrl, {
     redirect: "follow",
     headers: {
@@ -59,4 +88,4 @@ export async function resolveGoogleMapsUrl(
   }
 
   return { url: response.url, lat: coords.lat, lng: coords.lng };
-}
+};

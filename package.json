@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently --kill-others -p \"[{name}]\" -n UI,API \"pnpm dev:ui\" \"pnpm dev:server\"",
+    "dev:ui": "vite",
+    "dev:server": "PORT=3001 node --experimental-strip-types --watch server/index.ts",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
@@ -41,6 +43,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/supertest": "^7.2.1",
+    "concurrently": "^10.0.3",
     "jsdom": "^29.1.1",
     "supertest": "^7.2.2",
     "typescript": "^7.0.2",

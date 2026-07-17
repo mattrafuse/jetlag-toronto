@@ -11,7 +11,7 @@ export { stationRegistry } from "./station-registry";
 export type { RegisteredStation } from "./types";
 
 // Shared store + callbacks (used by React components)
-export { callbacks, store } from "./store";
+export { callbacks, roundCoord, store } from "./store";
 export type { QuestionsState, SidebarCallbacks } from "./store";
 
 // Shared types (used by React components)

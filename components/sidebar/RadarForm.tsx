@@ -1,7 +1,8 @@
 import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
-import { callbacks, radarQuestions, store } from "../../questions";
+import { callbacks, radarQuestions, roundCoord, store } from "../../questions";
 import { useStore } from "./useStore";
 import { usedRadarDistances } from "./usedDistances";
+import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -122,6 +123,14 @@ export const RadarForm = () => {
         <CoordField label="Lat" value={s.radarLat} onChange={handleLatChange} />
         <CoordField label="Lng" value={s.radarLng} onChange={handleLngChange} />
       </Box>
+
+      <GoogleMapsUrlField
+        label="Or paste a Google Maps URL to set the center"
+        onResolved={(lat, lng) => {
+          store.update({ radarLat: String(roundCoord(lat)), radarLng: String(roundCoord(lng)) });
+          callbacks.setRadarCenter(lat, lng);
+        }}
+      />
 
       {s.radarCenter && (
         <Button
