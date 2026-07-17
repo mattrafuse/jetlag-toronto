@@ -1,5 +1,5 @@
 import { act } from "react";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initOverlay } from "./overlay";
 import { settingsStore } from "./settings-store";
 

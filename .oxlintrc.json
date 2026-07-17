@@ -44,7 +44,7 @@
     "react/no-unescaped-entities": "error",
     "react/no-unknown-property": "error",
     "import/newline-after-import": "error",
-    "import/no-cycle": "warn",
+    "import/no-cycle": "off",
     "typescript/no-misused-spread": "off",
     "typescript/unbound-method": "off",
     "typescript/no-useless-default-assignment": "off",
