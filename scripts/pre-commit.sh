@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pnpm exec oxlint
-pnpm exec oxfmt --check
+pnpm exec oxlint --fix
+pnpm exec oxfmt
