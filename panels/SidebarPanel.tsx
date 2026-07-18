@@ -14,13 +14,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import React from "react";
-import { HistoryItem } from "../components/sidebar/HistoryItem";
-import { PolygonForm } from "../components/sidebar/PolygonForm";
-import { RadarForm } from "../components/sidebar/RadarForm";
-import { StationList } from "../components/sidebar/StationList";
-import { ThermometerForm } from "../components/sidebar/ThermometerForm";
-import { useQuestionsStore } from "../components/sidebar/useQuestionsStore";
-import { questionsCallbacks } from "../questions";
+import { HistoryItem } from "components/sidebar/HistoryItem";
+import { PolygonForm } from "components/sidebar/PolygonForm";
+import { RadarForm } from "components/sidebar/RadarForm";
+import { StationList } from "components/sidebar/StationList";
+import { ThermometerForm } from "components/sidebar/ThermometerForm";
+import { useQuestionsStore } from "components/sidebar/useQuestionsStore";
+import { questionsCallbacks } from "questions";
 
 // ── Main Sidebar Panel ─────────────────────────────────────────
 export const SidebarPanel = () => {

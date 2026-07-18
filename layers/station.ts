@@ -1,6 +1,6 @@
 import L from "leaflet";
-import { QUARTER_MILE } from "../constants";
-import { stationRegistry } from "../questions";
+import { QUARTER_MILE } from "constants";
+import { stationRegistry } from "questions";
 
 // ── Station factory ────────────────────────────────────────────
 // Creates the standard station visual: a small circleMarker dot wrapped

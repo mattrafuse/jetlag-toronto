@@ -15,6 +15,7 @@
       "layers/*": ["./layers/*"],
       "questions": ["./questions/index.ts"],
       "questions/*": ["./questions/*"],
+      "components/*": ["./components/*"],
       "store-hook": ["./store-hook.ts"],
       "constants": ["./constants.ts"]
     }
