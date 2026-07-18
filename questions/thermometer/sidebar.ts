@@ -74,19 +74,7 @@ export const createThermometerController = (
     clickHandler = (e: L.LeafletMouseEvent) => {
       if (!start) {
         start = [e.latlng.lat, e.latlng.lng];
-        startMarker = L.circleMarker(e.latlng, {
-          radius: 7,
-          color: "#3388ff",
-          fillColor: "#3388ff",
-          fillOpacity: 1,
-          weight: 2,
-        }).addTo(map);
-        startMarker.bindTooltip("Thermometer Start", {
-          permanent: true,
-          direction: "top",
-          className: "label",
-          offset: [0, -4],
-        });
+        startMarker = placeMarker(startMarker, e.latlng, "#3388ff", "Thermometer Start");
         store.update({
           thermoStart: start,
           thermoStartLat: String(roundCoord(start[0])),
@@ -94,26 +82,8 @@ export const createThermometerController = (
         });
       } else if (!end) {
         end = [e.latlng.lat, e.latlng.lng];
-        endMarker = L.circleMarker(e.latlng, {
-          radius: 7,
-          color: "#ff3333",
-          fillColor: "#ff3333",
-          fillOpacity: 1,
-          weight: 2,
-        }).addTo(map);
-        endMarker.bindTooltip("Thermometer End", {
-          permanent: true,
-          direction: "top",
-          className: "label",
-          offset: [0, -4],
-        });
-        if (startMarker) {
-          line = L.polyline([startMarker.getLatLng(), e.latlng], {
-            color: "#3388ff",
-            weight: 2,
-            dashArray: "5, 5",
-          }).addTo(map);
-        }
+        endMarker = placeMarker(endMarker, e.latlng, "#ff3333", "Thermometer End");
+        placeLine();
         store.update({
           thermoEnd: end,
           thermoEndLat: String(roundCoord(end[0])),
@@ -130,73 +100,62 @@ export const createThermometerController = (
     map.on("click", clickHandler);
   };
 
+  // Create-or-update a circle marker at `latlng`, binding the given tooltip.
+  // Returns the (possibly newly created) marker so callers can chain.
+  const placeMarker = (
+    ref: L.CircleMarker | null,
+    latlng: L.LatLng,
+    color: string,
+    tooltip: string,
+  ): L.CircleMarker => {
+    if (ref) {
+      ref.setLatLng(latlng);
+      return ref;
+    }
+    const marker = L.circleMarker(latlng, {
+      radius: 7,
+      color,
+      fillColor: color,
+      fillOpacity: 1,
+      weight: 2,
+    }).addTo(map);
+    marker.bindTooltip(tooltip, {
+      permanent: true,
+      direction: "top",
+      className: "label",
+      offset: [0, -4],
+    });
+    return marker;
+  };
+
+  // Rebuild the dashed connecting line between the two markers, replacing any
+  // existing line. No-op if either marker is missing.
+  const placeLine = (): void => {
+    if (!startMarker || !endMarker) return;
+    if (line) {
+      map.removeLayer(line);
+      line = null;
+    }
+    line = L.polyline([startMarker.getLatLng(), endMarker.getLatLng()], {
+      color: "#3388ff",
+      weight: 2,
+      dashArray: "5, 5",
+    }).addTo(map);
+  };
+
   // ── Set start from lat/lng inputs ───────────────────────────
   const setStart = (lat: number, lng: number): void => {
     start = [lat, lng];
-    const latlng = L.latLng(lat, lng);
-    if (startMarker) {
-      startMarker.setLatLng(latlng);
-    } else {
-      startMarker = L.circleMarker(latlng, {
-        radius: 7,
-        color: "#3388ff",
-        fillColor: "#3388ff",
-        fillOpacity: 1,
-        weight: 2,
-      }).addTo(map);
-      startMarker.bindTooltip("Thermometer Start", {
-        permanent: true,
-        direction: "top",
-        className: "label",
-        offset: [0, -4],
-      });
-    }
-    if (endMarker) {
-      if (line) {
-        map.removeLayer(line);
-        line = null;
-      }
-      line = L.polyline([startMarker.getLatLng(), endMarker.getLatLng()], {
-        color: "#3388ff",
-        weight: 2,
-        dashArray: "5, 5",
-      }).addTo(map);
-    }
+    startMarker = placeMarker(startMarker, L.latLng(lat, lng), "#3388ff", "Thermometer Start");
+    placeLine();
     store.update({ thermoStart: start });
   };
 
   // ── Set end from lat/lng inputs ─────────────────────────────
   const setEnd = (lat: number, lng: number): void => {
     end = [lat, lng];
-    const latlng = L.latLng(lat, lng);
-    if (endMarker) {
-      endMarker.setLatLng(latlng);
-    } else {
-      endMarker = L.circleMarker(latlng, {
-        radius: 7,
-        color: "#ff3333",
-        fillColor: "#ff3333",
-        fillOpacity: 1,
-        weight: 2,
-      }).addTo(map);
-      endMarker.bindTooltip("Thermometer End", {
-        permanent: true,
-        direction: "top",
-        className: "label",
-        offset: [0, -4],
-      });
-    }
-    if (startMarker) {
-      if (line) {
-        map.removeLayer(line);
-        line = null;
-      }
-      line = L.polyline([startMarker.getLatLng(), endMarker.getLatLng()], {
-        color: "#3388ff",
-        weight: 2,
-        dashArray: "5, 5",
-      }).addTo(map);
-    }
+    endMarker = placeMarker(endMarker, L.latLng(lat, lng), "#ff3333", "Thermometer End");
+    placeLine();
     store.update({ thermoEnd: end });
   };
 

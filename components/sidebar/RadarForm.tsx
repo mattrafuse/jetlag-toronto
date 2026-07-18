@@ -3,6 +3,8 @@ import { questionsCallbacks, questionsStore, radarQuestions, roundCoord } from "
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useQuestionsStore } from "./useQuestionsStore";
 import { usedRadarDistances } from "./usedDistances";
+import { validateCoordinates } from "./coordUtils";
+import capitalize from "lodash-es/capitalize";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -57,24 +59,21 @@ export const RadarForm = () => {
     questionsCallbacks.startRadarPicking();
   };
 
-  const handleLatChange = (val: string) => {
-    questionsStore.update({ radarLat: val });
-    const lat = Number(val);
-    const lng = Number(s.radarLng);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
-      return;
-    }
-    questionsCallbacks.setRadarCenter(lat, lng);
-  };
+  // Each coordinate field updates its own store value, then applies the pair
+  // to the map once both lat and lng are present and valid. The sibling field
+  // (lat<->lng) is read from the store.
+  const handleCoordChange = (field: "lat" | "lng", val: string) => {
+    questionsStore.update({ [`radar${capitalize(field)}`]: val });
+    const isLat = field === "lat";
+    const sibling = isLat ? "radarLng" : "radarLat";
+    const latStr = isLat ? val : s[sibling];
+    const lngStr = isLat ? s[sibling] : val;
 
-  const handleLngChange = (val: string) => {
-    questionsStore.update({ radarLng: val });
-    const lat = Number(s.radarLat);
-    const lng = Number(val);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
+    if (!validateCoordinates(latStr, lngStr)) {
       return;
     }
-    questionsCallbacks.setRadarCenter(lat, lng);
+
+    questionsCallbacks.setRadarCenter(Number(latStr), Number(lngStr));
   };
 
   const selectedDistance = s.radarUseCustom ? s.radarCustomDistance : s.radarDistance;
@@ -122,8 +121,16 @@ export const RadarForm = () => {
       </Paper>
 
       <Box sx={{ display: "flex", gap: 1 }}>
-        <CoordField label="Lat" value={s.radarLat} onChange={handleLatChange} />
-        <CoordField label="Lng" value={s.radarLng} onChange={handleLngChange} />
+        <CoordField
+          label="Lat"
+          value={s.radarLat}
+          onChange={(val) => handleCoordChange("lat", val)}
+        />
+        <CoordField
+          label="Lng"
+          value={s.radarLng}
+          onChange={(val) => handleCoordChange("lng", val)}
+        />
       </Box>
 
       <GoogleMapsUrlField

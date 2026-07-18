@@ -21,6 +21,7 @@ export const GoogleMapsUrlField = ({ label, onResolved }: GoogleMapsUrlFieldProp
     if (!trimmed || loading) {
       return;
     }
+
     setLoading(true);
     setError(null);
     try {
@@ -29,14 +30,17 @@ export const GoogleMapsUrlField = ({ label, onResolved }: GoogleMapsUrlFieldProp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: trimmed }),
       });
+
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(data.error ?? `Failed to resolve (status ${res.status})`);
       }
+
       const data = (await res.json()) as { lat: number; lng: number };
       if (typeof data.lat !== "number" || typeof data.lng !== "number") {
         throw new Error("Resolved location is missing coordinates");
       }
+
       onResolved(data.lat, data.lng);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to resolve URL");
@@ -56,7 +60,7 @@ export const GoogleMapsUrlField = ({ label, onResolved }: GoogleMapsUrlFieldProp
         <TextField
           size="small"
           fullWidth
-          placeholder="Google Maps URL…"
+          placeholder="Google Maps Url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => {

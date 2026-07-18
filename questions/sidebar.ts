@@ -42,12 +42,18 @@ let thermoController: ReturnType<typeof createThermometerController> | null = nu
 let polygonController: ReturnType<typeof createPolygonController> | null = null;
 
 // ── Exclusion layer ─────────────────────────────────────────────
+// Compute the cumulative exclusion polygon once; both the overlay layer and
+// the station filter consume the same result so we don't union twice.
+const computeCumulativeExclusion = (): GeoJSON.Feature<
+  GeoJSON.Polygon | GeoJSON.MultiPolygon
+> | null => unionExclusionZones(exclusionZones.map((z) => z.polygon));
+
 const updateExclusionLayer = (): void => {
   if (exclusionLayer) {
     map.removeLayer(exclusionLayer);
     exclusionLayer = null;
   }
-  const cumulative = unionExclusionZones(exclusionZones.map((z) => z.polygon));
+  const cumulative = computeCumulativeExclusion();
   if (cumulative) {
     exclusionLayer = L.geoJSON(cumulative, {
       style: { color: "#ff4444", weight: 2, fillColor: "#ff4444", fillOpacity: 0.15 },
@@ -61,7 +67,7 @@ const refreshStationStatuses = (): void => {
 };
 
 const applyStationFilter = (): void => {
-  const cumulative = unionExclusionZones(exclusionZones.map((z) => z.polygon));
+  const cumulative = computeCumulativeExclusion();
   stationRegistry.resetAll();
   if (cumulative) {
     for (const id of stationRegistry.getStationIdsInExclusionZone(
@@ -82,9 +88,11 @@ const computeExclusionPolygon = (question: AskedQuestion): GeoJSON.Feature<GeoJS
   if (question.type === "radar") {
     return computeRadarExclusion(question.center, question.distance, question.answer);
   }
+
   if (question.type === "polygon") {
     return computePolygonExclusion(question.rings, question.answer);
   }
+
   return computeThermometerExclusion(question.start, question.end, question.answer);
 };
 

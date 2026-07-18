@@ -83,10 +83,9 @@ const toggleLayer = (
   // layers and added directly to the map, so they aren't children of either
   // layer group. Hide a hub station when either of its source layers is off.
   if (id === "chk-trains" || id === "chk-subway") {
+    const settings = loadSettings();
     const otherLayerOn =
-      id === "chk-trains"
-        ? loadSettings()["chk-subway"] !== false
-        : loadSettings()["chk-trains"] !== false;
+      id === "chk-trains" ? settings["chk-subway"] !== false : settings["chk-trains"] !== false;
     if (!checked || !otherLayerOn) {
       stationRegistry.setHubStationsVisible(false);
     } else {

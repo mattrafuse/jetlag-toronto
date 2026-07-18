@@ -1,9 +1,21 @@
-import { Box, Button, MenuItem, Paper, Select, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  MenuItem,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import * as turf from "@turf/turf";
 import { questionsCallbacks, questionsStore, roundCoord, thermometerQuestions } from "questions";
 import { GoogleMapsUrlField } from "./GoogleMapsUrlField";
 import { useQuestionsStore } from "./useQuestionsStore";
 import { usedThermometerDistances } from "./usedDistances";
+import { validateCoordinates } from "./coordUtils";
+import capitalize from "lodash-es/capitalize";
 
 // ── Coordinate input helper ────────────────────────────────────
 const CoordField = ({
@@ -45,44 +57,31 @@ export const ThermometerForm = () => {
     questionsCallbacks.startThermoPicking();
   };
 
-  const handleStartLatChange = (val: string) => {
-    questionsStore.update({ thermoStartLat: val });
-    const lat = Number(val);
-    const lng = Number(s.thermoStartLng);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
-      return;
-    }
-    questionsCallbacks.setThermoStart(lat, lng);
-  };
+  // Each coordinate field updates its own store value, then applies the pair
+  // to the map once both lat and lng are present and valid. The sibling field
+  // (lat<->lng) is read from the store.
+  const handleCoordChange = (field: "start" | "end", direction: "lat" | "lng", val: string) => {
+    const key = `thermo${capitalize(field)}${capitalize(direction)}}`;
+    questionsStore.update({ [key]: val });
+    const isLat = key.endsWith("Lat");
+    const sibling = (isLat ? key.replace("Lat", "Lng") : key.replace("Lng", "Lat")) as
+      | "thermoStartLat"
+      | "thermoStartLng"
+      | "thermoEndLat"
+      | "thermoEndLng";
 
-  const handleStartLngChange = (val: string) => {
-    questionsStore.update({ thermoStartLng: val });
-    const lat = Number(s.thermoStartLat);
-    const lng = Number(val);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
-      return;
-    }
-    questionsCallbacks.setThermoStart(lat, lng);
-  };
+    const latStr = isLat ? val : s[sibling];
+    const lngStr = isLat ? s[sibling] : val;
 
-  const handleEndLatChange = (val: string) => {
-    questionsStore.update({ thermoEndLat: val });
-    const lat = Number(val);
-    const lng = Number(s.thermoEndLng);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
+    if (!validateCoordinates(latStr, lngStr)) {
       return;
     }
-    questionsCallbacks.setThermoEnd(lat, lng);
-  };
 
-  const handleEndLngChange = (val: string) => {
-    questionsStore.update({ thermoEndLng: val });
-    const lat = Number(s.thermoEndLat);
-    const lng = Number(val);
-    if (!val || Number.isNaN(lat) || Number.isNaN(lng)) {
-      return;
+    if (field === "start") {
+      questionsCallbacks.setThermoStart(Number(latStr), Number(lngStr));
+    } else {
+      questionsCallbacks.setThermoEnd(Number(latStr), Number(lngStr));
     }
-    questionsCallbacks.setThermoEnd(lat, lng);
   };
 
   const statusText = s.thermoStart
@@ -132,22 +131,37 @@ export const ThermometerForm = () => {
           }}
         >
           <Typography variant="body2">
-            Distance traveled: {travelDistance.toFixed(2)} mi
+            Distance traveled: {travelDistance.toFixed(4)} mi
             {distanceValid ? "" : ` — must be at least ${s.thermoDistance} mi for this thermometer`}
           </Typography>
         </Paper>
       )}
-
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="caption" color="text.secondary">
-          Start
+      <Stack spacing={1} sx={{ position: "relative", pl: 2 }}>
+        <Typography
+          color="primary"
+          sx={(theme) => ({
+            fontWeight: 600,
+            position: "absolute",
+            transform: "rotate(-90deg) translatex(10%)",
+            left: theme.spacing(-4),
+            top: "50%",
+          })}
+        >
+          S T A R T
         </Typography>
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <CoordField label="Lat" value={s.thermoStartLat} onChange={handleStartLatChange} />
-          <CoordField label="Lng" value={s.thermoStartLng} onChange={handleStartLngChange} />
-        </Box>
+        <Stack direction="row" spacing={1}>
+          <CoordField
+            label="Lat"
+            value={s.thermoStartLat}
+            onChange={(val) => handleCoordChange("start", "lat", val)}
+          />
+          <CoordField
+            label="Lng"
+            value={s.thermoStartLng}
+            onChange={(val) => handleCoordChange("start", "lng", val)}
+          />
+        </Stack>
         <GoogleMapsUrlField
-          label="Or paste a Google Maps URL to set the start"
           onResolved={(lat, lng) => {
             questionsStore.update({
               thermoStartLat: String(roundCoord(lat)),
@@ -156,15 +170,35 @@ export const ThermometerForm = () => {
             questionsCallbacks.setThermoStart(lat, lng);
           }}
         />
-        <Typography variant="caption" color="text.secondary">
-          End
+      </Stack>
+      <Divider flexItem />
+      <Stack spacing={1} sx={{ position: "relative", pl: 2 }}>
+        <Typography
+          color="error"
+          sx={{
+            fontWeight: 600,
+            position: "absolute",
+            transform: "rotate(-90deg) translatex(15%)",
+            left: "-18px",
+            top: "50%",
+          }}
+        >
+          E N D
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <CoordField label="Lat" value={s.thermoEndLat} onChange={handleEndLatChange} />
-          <CoordField label="Lng" value={s.thermoEndLng} onChange={handleEndLngChange} />
+          <CoordField
+            label="Lat"
+            value={s.thermoEndLat}
+            onChange={(val) => handleCoordChange("end", "lat", val)}
+          />
+          <CoordField
+            label="Lng"
+            value={s.thermoEndLng}
+            onChange={(val) => handleCoordChange("end", "lng", val)}
+          />
         </Box>
+
         <GoogleMapsUrlField
-          label="Or paste a Google Maps URL to set the end"
           onResolved={(lat, lng) => {
             questionsStore.update({
               thermoEndLat: String(roundCoord(lat)),
@@ -173,7 +207,7 @@ export const ThermometerForm = () => {
             questionsCallbacks.setThermoEnd(lat, lng);
           }}
         />
-      </Box>
+      </Stack>
 
       {(s.thermoStart || s.thermoEnd) && (
         <Button

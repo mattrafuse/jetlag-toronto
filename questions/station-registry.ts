@@ -50,6 +50,23 @@ class StationRegistry {
     this.onChange?.();
   }
 
+  // Re-apply persistent exclusion state (removed or grayed) to a station. This
+  // is shared by both the hub-member buffering path and the direct-registration
+  // path so the two duplicated `if (wasRemoved) … else if (wasGrayed)` blocks
+  // collapse into a single call.
+  private applyExclusionState(
+    station: RegisteredStation,
+    id: string,
+    wasRemoved: boolean,
+    wasGrayed: boolean,
+  ): void {
+    if (wasRemoved) {
+      this.setHidden(station, true);
+    } else if (wasGrayed) {
+      this.grayOutStation(id);
+    }
+  }
+
   register(
     id: string,
     name: string,
@@ -93,11 +110,7 @@ class StationRegistry {
 
       // Re-apply persistent exclusion state to the buffered member so it stays
       // consistent with the merged entry once created.
-      if (wasRemoved) {
-        this.setHidden(station, true);
-      } else if (wasGrayed) {
-        this.grayOutStation(id);
-      }
+      this.applyExclusionState(station, id, wasRemoved, wasGrayed);
       return;
     }
 
@@ -106,11 +119,7 @@ class StationRegistry {
     // Re-apply persistent exclusion state to the freshly created layer.
     // We hide via opacity (not map removal) so that esri-leaflet featureLayers,
     // which re-add their cached layers on every zoom/move, cannot undo it.
-    if (wasRemoved) {
-      this.setHidden(station, true);
-    } else if (wasGrayed) {
-      this.grayOutStation(id);
-    }
+    this.applyExclusionState(station, id, wasRemoved, wasGrayed);
     // Global label visibility is handled via a CSS class on the map container
     // (see setLabelsVisible), so no per-marker work is needed here.
   }

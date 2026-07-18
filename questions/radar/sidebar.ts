@@ -4,11 +4,37 @@
 // composes this controller; it never imports thermometer code.
 
 import L from "leaflet";
-import { type QuestionsStoreType, roundCoord } from "../store";
+import { type QuestionsState, type QuestionsStoreType, roundCoord } from "../store";
 import { radarQuestions } from "./data";
 import type { AskedRadarQuestion } from "./types";
 
 const MILES_TO_METERS = 1609.344;
+
+const CENTRE_MARKER = {
+  icon: L.divIcon({
+    className: "questions-radar-marker",
+    html: `
+            <div class="questions-radar-bullseye">
+              <span class="ring ring-outer"></span>
+              <span class="ring ring-mid"></span>
+              <span class="ring ring-inner"></span>
+            </div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+  }),
+};
+
+/**
+ * Resolve the currently selected radar distance (in miles) from the store.
+ * When the custom-distance mode is active and holds a positive finite number,
+ * that value is used; otherwise the preset `radarDistance` is used. This is
+ * the single source of truth for "which radius is selected" and replaces the
+ * three duplicated ternaries that previously computed it inline.
+ */
+const getSelectedDistance = (s: QuestionsState): number =>
+  s.radarUseCustom && !Number.isNaN(s.radarCustomDistance) && s.radarCustomDistance > 0
+    ? s.radarCustomDistance
+    : s.radarDistance;
 
 export interface RadarControllerDependencies {
   map: L.Map;
@@ -39,10 +65,7 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
   // submit another radar of the same type until the radius changes.
   const selectedDistanceUsed = (): boolean => {
     const s = store.get();
-    const distance =
-      s.radarUseCustom && !Number.isNaN(s.radarCustomDistance) && s.radarCustomDistance > 0
-        ? s.radarCustomDistance
-        : s.radarDistance;
+    const distance = getSelectedDistance(s);
     return s.history.some((q) => q.type === "radar" && q.distance === distance);
   };
 
@@ -51,16 +74,15 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
     if (!center) {
       return;
     }
-    const s = store.get();
-    const distance =
-      s.radarUseCustom && !Number.isNaN(s.radarCustomDistance) && s.radarCustomDistance > 0
-        ? s.radarCustomDistance
-        : s.radarDistance;
 
     if (radiusPreview) {
       map.removeLayer(radiusPreview);
       radiusPreview = null;
     }
+
+    const s = store.get();
+    const distance = getSelectedDistance(s);
+
     radiusPreview = L.circle(center, {
       radius: distance * MILES_TO_METERS,
       color: "#3388ff",
@@ -77,10 +99,12 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
       map.removeLayer(centerMarker);
       centerMarker = null;
     }
+
     if (radiusPreview) {
       map.removeLayer(radiusPreview);
       radiusPreview = null;
     }
+
     center = null;
     store.update({ radarCenter: null, radarLat: "", radarLng: "" });
   };
@@ -100,27 +124,18 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
       if (centerMarker) {
         centerMarker.setLatLng(e.latlng);
       } else {
-        centerMarker = L.marker(e.latlng, {
-          icon: L.divIcon({
-            className: "questions-radar-marker",
-            html: `
-              <div class="questions-radar-bullseye">
-                <span class="ring ring-outer"></span>
-                <span class="ring ring-mid"></span>
-                <span class="ring ring-inner"></span>
-              </div>`,
-            iconSize: [36, 36],
-            iconAnchor: [18, 18],
-          }),
-        }).addTo(map);
+        centerMarker = L.marker(e.latlng, CENTRE_MARKER).addTo(map);
       }
+
       updateRadiusPreview();
+
       store.update({
         radarCenter: center,
         radarLat: String(roundCoord(center[0])),
         radarLng: String(roundCoord(center[1])),
       });
     };
+
     map.on("click", clickHandler);
   };
 
@@ -128,23 +143,13 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
   const setCenter = (lat: number, lng: number): void => {
     center = [lat, lng];
     const latlng = L.latLng(lat, lng);
+
     if (centerMarker) {
       centerMarker.setLatLng(latlng);
     } else {
-      centerMarker = L.marker(latlng, {
-        icon: L.divIcon({
-          className: "questions-radar-marker",
-          html: `
-            <div class="questions-radar-bullseye">
-              <span class="ring ring-outer"></span>
-              <span class="ring ring-mid"></span>
-              <span class="ring ring-inner"></span>
-            </div>`,
-          iconSize: [36, 36],
-          iconAnchor: [18, 18],
-        }),
-      }).addTo(map);
+      centerMarker = L.marker(latlng, CENTRE_MARKER).addTo(map);
     }
+
     updateRadiusPreview();
     store.update({ radarCenter: center });
   };
@@ -154,12 +159,13 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
     if (!center || selectedDistanceUsed()) {
       return;
     }
+
     const s = store.get();
     let distance: number;
     let label: string;
 
     if (s.radarUseCustom && !Number.isNaN(s.radarCustomDistance) && s.radarCustomDistance > 0) {
-      distance = s.radarCustomDistance;
+      distance = getSelectedDistance(s);
       label = `${s.radarCustomDistance} Mile${s.radarCustomDistance === 1 ? "" : "s"}`;
     } else {
       const selected = radarQuestions.find((q) => q.distance === s.radarDistance);
@@ -187,7 +193,9 @@ export const createRadarController = (deps: RadarControllerDependencies): RadarC
 
   // Keep the radius preview in sync with distance changes from the UI.
   store.subscribe(() => {
-    if (center) updateRadiusPreview();
+    if (center) {
+      updateRadiusPreview();
+    }
   });
 
   return {

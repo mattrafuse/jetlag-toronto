@@ -98,7 +98,7 @@ export const SidebarPanel = () => {
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }} color="text.secondary">
             Question History
           </Typography>
-          <Box sx={[!isSmall && { flex: 1, overflow: "auto" }]}>
+          <Box sx={[!isSmall && { overflow: "auto" }]}>
             {s.history.length === 0 ? (
               <Typography variant="body2" color="text.disabled" sx={{ fontStyle: "italic" }}>
                 No questions asked yet

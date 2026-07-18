@@ -3,7 +3,7 @@ import { Box, Chip, IconButton, Typography } from "@mui/material";
 import type { AskedQuestion } from "questions";
 
 // ── Helpers ────────────────────────────────────────────────────
-const fmt = (n: number): string => n.toFixed(4);
+const fmt = (n: number): string => n.toFixed(6);
 
 const coordLabel = (lat: number, lng: number): string => `${fmt(lat)}, ${fmt(lng)}`;
 
