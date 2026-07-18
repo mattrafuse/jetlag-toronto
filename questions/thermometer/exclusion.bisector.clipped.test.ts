@@ -20,10 +20,7 @@ const angleBetweenDeg = (v1: [number, number], v2: [number, number]): number => 
 // Find the edge of `ring` whose direction is closest to perpendicular to `abDir`.
 // Returns the angle between that edge and AB (ideally ~90°), or null if the
 // ring has no usable edges.
-const bestPerpendicularAngle = (
-  ring: number[][],
-  abDir: [number, number],
-): number | null => {
+const bestPerpendicularAngle = (ring: number[][], abDir: [number, number]): number | null => {
   let best: number | null = null;
   let bestDeviation = Infinity;
   for (let i = 0; i < ring.length - 1; i++) {
