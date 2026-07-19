@@ -11,7 +11,7 @@ import { gameBorder } from "../game-border";
  * just needs to be large enough that the half-plane fully covers the game
  * area on the excluded side.
  */
-const EXTENT = 100;
+const EXTENT = 30;
 
 /**
  * Compute the exclusion polygon for a thermometer question.
@@ -112,6 +112,13 @@ export const computeThermometerBisector = (
   // Convert to [lng, lat] for turf
   const A: [number, number] = [start[1], start[0]];
   const B: [number, number] = [end[1], end[0]];
+  // Degenerate segment: no bisector exists. (rhumbBearing returns 0 for
+  // identical points, which would produce a bogus east-west line through
+  // the point instead of no line at all.)
+  if (A[0] === B[0] && A[1] === B[1]) {
+    return null;
+  }
+
   // 1. Find the center point where the bisector starts
   const midpoint = turf.midpoint(turf.point(A), turf.point(B));
 
@@ -121,14 +128,14 @@ export const computeThermometerBisector = (
   // two endpoints toward the poles, tilting the bisector and shifting it
   // off the true midpoint — most visibly for roughly east-west segments.
   const originalBearing = turf.rhumbBearing(turf.point(A), turf.point(B));
-  const perpendicularBearing = originalBearing + 90;
+  const perpendicularBearing = (originalBearing + 90) % 360;
 
   // 3. Project two points far away in opposite directions.
   // Use a distance large enough to safely clear your maximum game board size (e.g., 1000 km)
   const p1 = turf.rhumbDestination(midpoint, EXTENT, perpendicularBearing, {
     units: "kilometers",
   });
-  const p2 = turf.rhumbDestination(midpoint, EXTENT, perpendicularBearing + 180, {
+  const p2 = turf.rhumbDestination(midpoint, EXTENT, (perpendicularBearing + 180) % 360, {
     units: "kilometers",
   });
 
