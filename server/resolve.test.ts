@@ -5,6 +5,7 @@ import { parseCoordinates, resolveGoogleMapsUrl } from "./resolve.js";
 
 const GOOGLE_MAPS_PIN = "https://maps.app.goo.gl/Y15MTnA9SVza9PKC6";
 const GOOGLE_MAPS_PIN_2 = "https://maps.app.goo.gl/cPNEUdLhcge6uZrE7?g_st=isi";
+const GOOGLE_MAPS_PIN_3 = "https://maps.app.goo.gl/AgrkHjhY3zA4pRRs9";
 
 describe("parseCoordinates", () => {
   it("extracts lat/lng from a resolved Google Maps search URL", () => {
@@ -79,6 +80,18 @@ describe("POST /api/resolve (integration)", () => {
     expect(typeof res.body.url).toBe("string");
     expect(res.body.url).toContain("google.com/maps");
   }, 30000);
+
+  it("resolves the third Google Maps short URL to lat/lng", async () => {
+    const res = await request(app).post("/api/resolve").send({ url: GOOGLE_MAPS_PIN_3 });
+
+    expect(res.status).toBe(200);
+    expect(typeof res.body.lat).toBe("number");
+    expect(typeof res.body.lng).toBe("number");
+    expect(Number.isFinite(res.body.lat)).toBe(true);
+    expect(Number.isFinite(res.body.lng)).toBe(true);
+    expect(typeof res.body.url).toBe("string");
+    expect(res.body.url).toContain("google.com/maps");
+  }, 30000);
 });
 
 describe("resolveGoogleMapsUrl (integration)", () => {
@@ -90,6 +103,15 @@ describe("resolveGoogleMapsUrl (integration)", () => {
 
   it("follows the redirect and returns coordinates for the second live URL", async () => {
     const result = await resolveGoogleMapsUrl(GOOGLE_MAPS_PIN_2);
+    expect(typeof result.lat).toBe("number");
+    expect(typeof result.lng).toBe("number");
+    expect(Number.isFinite(result.lat)).toBe(true);
+    expect(Number.isFinite(result.lng)).toBe(true);
+    expect(result.url).toContain("google.com/maps");
+  }, 30000);
+
+  it("follows the redirect and returns coordinates for the third live URL", async () => {
+    const result = await resolveGoogleMapsUrl(GOOGLE_MAPS_PIN_3);
     expect(typeof result.lat).toBe("number");
     expect(typeof result.lng).toBe("number");
     expect(Number.isFinite(result.lat)).toBe(true);
